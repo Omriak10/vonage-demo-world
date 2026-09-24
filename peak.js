@@ -175,13 +175,11 @@ async function welcome(to, ch) {
 }
 async function menu(to, ch) {
   return carousel(to, ch, [
-    { title: 'Agenda', desc: 'Six sessions from 9:00. Add any of them to your calendar.', img: 'menu-agenda', chips: [{ t: 'View agenda', pb: 'PK_AGENDA' }] },
-    { title: 'All Vonage solutions', desc: 'Every API and product, each with a 60-second video, the product page and the developer docs.', img: 'menu-showcase', chips: [{ t: 'Browse solutions', pb: 'PK_SOL' }] },
+    { title: 'Agenda', desc: 'View the full-day agenda and add any session to your calendar.', img: 'room', chips: [{ t: 'View agenda', pb: 'PK_AGENDA' }] },
     { title: 'What is rich messaging', desc: 'Verified senders, rich cards, carousels and actions, explained in 60 seconds.', img: 'menu-rcs', chips: [{ t: 'Show me', pb: 'PK_RCS' }] },
     { title: 'Games', desc: 'Seven games: quiz, emoji decoder, true or false, higher or lower, memory match, tap the V, and a poll.', img: 'menu-game', chips: [{ t: 'Play', pb: 'PK_GAME' }] },
     { title: 'A branded demo, built for you', desc: 'Send a photo of your logo or product and our AI builds your RCS demo.', img: 'menu-branded', chips: [{ t: 'Build my demo', pb: 'PK_BRAND' }] },
-    { title: 'Live demo showcase', desc: 'Shopping, a real voice call, video, documents and verification, all from this thread.', img: 'agenda-showcase', chips: [{ t: 'Open showcase', pb: 'PK_SHOW' }] },
-    { title: 'Customer stories', desc: 'Aramex, Vinted, Revolut, Grab, Zalora and more: what they built on Vonage, with the full story on vonage.com.', img: 'agenda-telefonica', chips: [{ t: 'See the stories', pb: 'PK_STORIES' }] },
+    { title: 'Customer stories', desc: 'Browse what retailers, fintechs and operators have built on Vonage.', img: 'agenda-telefonica', chips: [{ t: 'Browse the stories', pb: 'PK_STORY_ALL', url: 'https://www.vonage.com/resources/customers/', mode: 'TALL' }] },
     { title: 'Find out more', desc: 'Tell us what you would like to build and we will follow up.', img: 'menu-form', chips: [webChip('Quick enquiry', 'peak-enquiry.html', who(to, ch))] },
     { title: 'Try it on WhatsApp', desc: 'The same experience runs on WhatsApp through the Vonage Messages API.', img: 'menu-whatsapp', chips: [{ t: 'Open WhatsApp', pb: 'PK_WA', url: 'https://wa.me/' + D.WA_NUMBER + '?text=PEAK', ext: true }] },
   ]);
@@ -191,9 +189,9 @@ async function agenda(to, ch) {
   return carousel(to, ch, [
     ...AGENDA.map((a) => ({ title: a.t + '  ' + a.title, desc: a.desc, img: a.img,
       chips: [{ t: 'Add to calendar', pb: 'PK_CAL', cal: { start: calAt(a.t), end: calAt(a.end), title: 'Peak Season Promotions: ' + a.title, desc: a.desc + ' (' + VENUE.name + ')' } }, MENU] })),
-    { title: 'The whole day in one place', desc: 'The full agenda as a page, or as a PDF sent into this chat.', img: 'menu-agenda',
+    { title: 'The whole day in one place', desc: 'The full agenda as a page, or as a PDF sent into this chat.', img: 'room',
       chips: [webChip('Full agenda', 'peak-agenda.html'), { t: 'Send me the PDF', pb: 'PK_PDF' }, MENU] },
-  ], { title: 'Agenda', img: 'menu-agenda' });
+  ], { title: 'Agenda', img: 'room' });
 }
 async function team(to, ch) {
   await carousel(to, ch, TEAM.map((m) => ({ title: m.name, desc: m.role, img: m.img, chips: [{ t: 'Say hello', pb: 'PK_HELLO' }, { t: 'Ask a question', pb: 'PK_ASK' }, MENU] })));
@@ -345,7 +343,7 @@ async function stories(to, ch) {
 }
 // ---- Verify (real one-time code, checked in the thread) ----
 async function verifyStart(to, ch, next) {
-  const s = sess(to); next = next || 'PK_SHOW';
+  const s = sess(to); next = next || 'PK_MENU';
   try {
     const wf = ch === 'whatsapp' ? [{ channel: 'whatsapp', to: digits(to), from: D.WA_NUMBER }, { channel: 'sms', to: digits(to) }] : [{ channel: 'sms', to: digits(to) }];
     const r = await D.f(D.API_BASE + '/v2/verify', { method: 'POST', headers: { Authorization: D.DW_VBASIC(), 'Content-Type': 'application/json' }, body: JSON.stringify({ brand: 'Vonage', workflow: wf, code_length: 6 }) });
@@ -379,7 +377,7 @@ const noPrice = (s) => String(s || '').replace(/\s*[-·]\s*[£€$]\s?[\d.,]+.*$
 async function shop(to, ch) {
   await carousel(to, ch, [
     ...D.DW_PRODUCTS.map((p) => ({ title: p.name, desc: noPrice(p.desc), img: p.img, chips: [{ t: 'Shop', pb: 'PK_SHOP_TAP', url: p.url, mode: 'TALL' }, MENU] })),
-    { title: 'Every tap is tracked', desc: 'Each button comes back as a postback, so you know which card sold.', img: 'showcase-shop', chips: [{ t: 'Back to showcase', pb: 'PK_SHOW' }, MENU] },
+    { title: 'Every tap is tracked', desc: 'Each button comes back as a postback, so you know which card sold.', img: 'showcase-shop', chips: [MENU] },
   ]);
 }
 async function callMe(to, ch) {
@@ -387,7 +385,7 @@ async function callMe(to, ch) {
   try {
     const r = await D.f(D.API_BASE + '/v1/calls', { method: 'POST', headers: { Authorization: 'Bearer ' + D.vjwt(), 'Content-Type': 'application/json' },
       body: JSON.stringify({ to: [{ type: 'phone', number: digits(to) }], from: { type: 'phone', number: D.VOICE_NUMBER }, answer_url: [D.DW_CF + '/dw/voice/answer?m=' + encodeURIComponent(msg)], answer_method: 'GET' }) });
-    if (r.ok) return card(to, ch, { title: 'Calling you now', desc: 'From +' + D.VOICE_NUMBER + '. Pick up to hear the Voice API.', img: 'showcase-voice', chips: [{ t: 'Voice API video', pb: 'PK_VID_voice' }, { t: 'Back to showcase', pb: 'PK_SHOW' }, MENU] });
+    if (r.ok) return card(to, ch, { title: 'Calling you now', desc: 'From +' + D.VOICE_NUMBER + '. Pick up to hear the Voice API.', img: 'showcase-voice', chips: [{ t: 'Voice API video', pb: 'PK_VID_voice' }, MENU] });
     log('call failed', r.status, (await r.text()).slice(0, 200));
   } catch (e) { log('call error', e.message); }
   return back(to, ch, 'The call could not be placed', 'Try again in a moment.', 'showcase-voice', [{ t: 'Try again', pb: 'PK_CALL' }]);
@@ -442,8 +440,7 @@ async function dispatch(to, ch, pb) {
   if (u === 'PK_MENU') return menu(to, ch);
   if (u === 'PK_AGENDA') return agenda(to, ch);
   if (u.startsWith('PK_WAC_')) { const m = u.match(/^PK_WAC_(\w+)_(\d+)$/); const set = m && sess(to).waSets && sess(to).waSets[m[1].toLowerCase()]; const c = set && set[+m[2]]; if (c) return waCard(to, Object.assign({}, c, { chips: [...(c.chips || []).filter((x) => x.pb !== 'PK_MENU'), MENU] })); return menu(to, ch); }
-  if (u === 'PK_SOL') return solutions(to, ch);
-  if (u === 'PK_SOL_2') return carousel(to, ch, SOL.slice(9).map((s, i, arr) => solCard(s, i === arr.length - 1 ? MENU : null)));
+  if (u === 'PK_SOL' || u === 'PK_SOL_2' || u === 'PK_SHOW') return menu(to, ch);
   if (u === 'PK_HELLO') return back(to, ch, 'Hello back!', 'Wave at anyone in a Vonage T-shirt, or find us at the stand by the entrance.', 'menu-team');
   if (u === 'PK_ASK') return back(to, ch, 'Ask away', 'Type your question here and one of the team will answer it in this thread during the panel.', 'agenda-panel');
   if (u === 'PK_RCS') return rcsExplainer(to, ch);
@@ -461,13 +458,12 @@ async function dispatch(to, ch, pb) {
   if (u === 'PK_BRAND') return brand(to, ch);
   if (u === 'PK_BRAND_HOW') return brandHow(to, ch);
   if (u === 'PK_BRAND_TAP') return back(to, ch, 'In a live deployment', 'That tap would open your webview, call you, or continue the flow. Every tap is tracked.', 'menu-branded', [{ t: 'Build another', pb: 'PK_BRAND' }]);
-  if (u === 'PK_STORIES') return stories(to, ch);
+  if (u === 'PK_STORIES') return card(to, ch, { title: 'Customer stories', desc: 'Browse what retailers, fintechs and operators have built on Vonage, on vonage.com.', img: 'agenda-telefonica', chips: [{ t: 'Browse the stories', pb: 'PK_STORY_ALL', url: 'https://www.vonage.com/resources/customers/', mode: 'TALL' }, MENU] });
   if (u.startsWith('PK_VID_')) return sendVideo(to, ch, pb.slice(7).toLowerCase());
-  if (u === 'PK_SHOW') return showcase(to, ch);
   if (u === 'PK_SHOP') return shop(to, ch);
   if (u === 'PK_CALL') return callMe(to, ch);
   if (u === 'PK_PDF') return sendPdf(to, ch);
-  if (u === 'PK_VERIFY') return verifyStart(to, ch, 'PK_SHOW');
+  if (u === 'PK_VERIFY') return verifyStart(to, ch, 'PK_MENU');
   if (u === 'PK_CAL' || u === 'PK_MAP' || u === 'PK_DIALX' || u === 'PK_WA' || u === 'PK_VIDEO' || u === 'PK_SHOP_TAP' || u.startsWith('PK_WEB_') || u.startsWith('PK_MKT_') || u.startsWith('PK_DOC_') || u.startsWith('PK_STORY_')) return null; // native actions: nothing to send
   return menu(to, ch);
 }

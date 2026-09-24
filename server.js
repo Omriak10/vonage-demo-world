@@ -9,11 +9,9 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { S3Client, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { BedrockRuntimeClient, InvokeModelCommand } = require('@aws-sdk/client-bedrock-runtime');
-const multer = require('multer');
 const peak = require('./peak'); // Peak Season event demo module (mounted after the config below)
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: '25mb' }));
 
 const PORT = process.env.PORT || 8081;
 
@@ -71,6 +69,70 @@ const SALESHUB_INBOUND = env('SALESHUB_INBOUND_URL');
 const DW_VIBER_VIDEO = env('DW_VIBER_VIDEO', ASSET_BASE + '/media/order-taxi.mp4');
 const DW_VIBER_THUMB = env('DW_VIBER_THUMB', ASSET_BASE + '/toon/viber-marketing.jpg');
 const DW_VIBER_PDF = env('DW_VIBER_PDF', ASSET_BASE + '/AURELIA-Occasion-Edit.pdf');
+
+// ============================================================
+// Security controls
+// ============================================================
+// Raw body is kept for webhook signature checks; JSON parsing stays global.
+app.use(express.json({ limit: '25mb', verify: (req, res, buf) => { req.rawBody = buf; } }));
+// Security headers on every response (CSP allows the inline scripts the demo pages use and the SDK/CDN hosts they load).
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(self), microphone=(self), geolocation=()');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src * data: blob:; media-src * blob:; connect-src *; font-src https: data:; frame-src https:; worker-src 'self' blob:; base-uri 'self'; form-action 'self'");
+  if ((req.headers['x-forwarded-proto'] || req.protocol) === 'https') res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
+// Rate limiting: fixed windows in memory, per client address and per signed-in user (see DW_RATE_* in .env.example).
+const RATE = { ipPerMin: +env('DW_RATE_IP_PER_MIN', 30), userPerMin: +env('DW_RATE_USER_PER_MIN', 20), userPerDay: +env('DW_RATE_USER_PER_DAY', 300), authPerMin: +env('DW_RATE_AUTH_PER_MIN', 10) };
+const buckets = new Map();
+function hit(key, limit, windowMs) {
+  const now = Date.now(); let b = buckets.get(key);
+  if (!b || now > b.reset) { b = { n: 0, reset: now + windowMs }; buckets.set(key, b); }
+  b.n += 1; return b.n <= limit;
+}
+setInterval(() => { const now = Date.now(); for (const [k, b] of buckets) if (now > b.reset) buckets.delete(k); }, 60000).unref();
+const clientIp = (req) => String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+const AUTH_PATHS = new Set(['/register', '/login', '/forgot', '/reset', '/resend-verification']);
+// Login lockout: progressive delay, then a temporary lock per account after repeated failures.
+const loginFails = new Map();
+function loginAllowed(email) { const f = loginFails.get(email); return !(f && f.lockedUntil && f.lockedUntil > Date.now()); }
+function loginFailed(email) { const f = loginFails.get(email) || { n: 0 }; f.n += 1; if (f.n >= 8) { f.lockedUntil = Date.now() + 15 * 60000; f.n = 0; } loginFails.set(email, f); }
+function loginOk(email) { loginFails.delete(email); }
+// Every /dw/api call needs a verified session except the auth endpoints; demo actions are also rate limited and audited.
+app.use('/dw/api', (req, res, next) => {
+  const ip = clientIp(req);
+  if (AUTH_PATHS.has(req.path)) { if (!hit('auth:' + ip, RATE.authPerMin, 60000)) return res.status(429).json({ error: 'Too many attempts - wait a minute and try again' }); return next(); }
+  if (req.path === '/me' || req.path === '/logout') return next();
+  if (req.path === '/video/session') { if (!hit('ip:' + ip, RATE.ipPerMin, 60000)) return res.status(429).json({ error: 'Too many requests' }); return next(); } // guests join event video rooms from a link
+  const u = dwCookie(req);
+  if (!u) return res.status(401).json({ error: 'Sign in to run demos' });
+  req.dwUser = u;
+  if (req.method !== 'GET') {
+    if (!hit('ip:' + ip, RATE.ipPerMin, 60000) || !hit('u:' + u.email, RATE.userPerMin, 60000)) return res.status(429).json({ error: 'Slow down - too many demo actions this minute' });
+    if (!hit('d:' + u.email, RATE.userPerDay, 86400000)) return res.status(429).json({ error: 'Daily demo limit reached for your account' });
+    const to = String((req.body && (req.body.to || req.body.a || req.body.number)) || '').replace(/\D/g, '');
+    logEvent({ kind: 'demo', channel: (req.body && req.body.channel) || '', to: to ? to.slice(0, 4) + '***' + to.slice(-3) : '', campaignName: req.path + (req.body && req.body.demo ? ' ' + req.body.demo : ''), status: 'request', vendor: u.email }).catch(() => {});
+  }
+  next();
+});
+app.use(['/dw/admin', '/dw/peak/enquiries'], (req, res, next) => { if (!dwCookie(req)) return res.redirect('/demoworld'); next(); });
+// Signed webhooks: Vonage sends a JWT (HS256, the account signature secret) in the Authorization header with a
+// payload_hash of the raw body. When VONAGE_SIGNATURE_SECRET is set, anything unsigned or stale is dropped.
+const VONAGE_SIGNATURE_SECRET = env('VONAGE_SIGNATURE_SECRET');
+function verifyVonageWebhook(req, res, next) {
+  if (!VONAGE_SIGNATURE_SECRET) { if (!verifyVonageWebhook._warned) { console.warn('[SECURITY] VONAGE_SIGNATURE_SECRET not set - webhooks are accepted unsigned'); verifyVonageWebhook._warned = true; } return next(); }
+  try {
+    const tok = String(req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+    const claims = jwt.verify(tok, VONAGE_SIGNATURE_SECRET, { algorithms: ['HS256'] });
+    if (claims.payload_hash && req.rawBody) { const h = crypto.createHash('sha256').update(req.rawBody).digest('hex'); if (h !== claims.payload_hash) throw new Error('payload hash mismatch'); }
+    if (claims.iat && Date.now() / 1000 - claims.iat > 300) throw new Error('stale webhook');
+    next();
+  } catch (e) { console.warn('[SECURITY] webhook rejected:', e.message); res.status(401).send('invalid signature'); }
+}
+app.use(['/webhooks', '/dw/voice'], verifyVonageWebhook);
 
 const P = DATA_PREFIX;
 let fetchFn = null;
@@ -493,7 +555,7 @@ async function waUploadHandle(mediaUrl) {
   const buf = Buffer.from(await mr.arrayBuffer());
   let ft = (mr.headers.get('content-type') || 'image/jpeg').split(';')[0].trim();
   if (!/^(image|video|application)\//.test(ft)) ft = 'image/jpeg';
-  const boundary = '----FB' + crypto.randomBytes(8).toString('hex');
+  const boundary = '----FB' + crypto.randomBytes(16).toString('hex');
   const fn = 'media.' + (ft.split('/')[1] || 'jpg');
   const head = `--${boundary}\r\nContent-Disposition: form-data; name="mediafile"; filename="${fn}"\r\nContent-Type: ${ft}\r\n\r\n`;
   const body = Buffer.concat([Buffer.from(head), buf, Buffer.from(`\r\n--${boundary}--\r\n`)]);
@@ -818,7 +880,7 @@ app.all(['/webhooks/inbound'], express.json(), async (req, res) => {
 // Vonage Demo-World — internal API demo showcase (public routes)
 // ============================================================
 // ============ DEMO-WORLD REGISTRATION / LOGIN (users in S3 via dget/dset: dw_users) ============
-const dwHash = (pass, salt) => crypto.createHash('sha256').update(salt + '|' + pass).digest('hex');
+const dwHash = (pass, salt) => crypto.scryptSync(String(pass), String(salt), 32, { N: 16384, r: 8, p: 1 }).toString('hex');
 
 // Minimal SMTP-over-TLS sender (smtp.gmail.com:465) - no extra npm dependency.
 // Demo-World transactional mail. Gmail SMTP with the app password (primary); the Demo-World Gmail API sender
@@ -828,7 +890,7 @@ function dwSmtpSend(to, subject, html, text) {
   return new Promise((resolve, reject) => {
     if (!GMAIL_APP_PASS) return reject(new Error('mail not configured (GMAIL_APP_PASS missing)'));
     const tlsMod = require('tls');
-    const boundary = 'dw' + crypto.randomBytes(8).toString('hex');
+    const boundary = 'dw' + crypto.randomBytes(16).toString('hex');
     const msgId = '<' + crypto.randomBytes(12).toString('hex') + '@demoworld.vonage>';
     const body = [
       `From: Vonage Demo-World <${GMAIL_USER}>`, `Reply-To: ${DW_ADMIN_EMAIL}`, `To: <${to}>`, `Subject: ${subject}`, `Date: ${new Date().toUTCString()}`, `Message-ID: ${msgId}`,
@@ -913,7 +975,7 @@ async function dwSeed() {
   if (!DW_ADMIN_EMAIL || !DW_SEED_PASSWORD) return;
   const users = await dwUsers();
   if (!users.find(u => u.email === DW_ADMIN_EMAIL)) {
-    const salt = crypto.randomBytes(8).toString('hex');
+    const salt = crypto.randomBytes(16).toString('hex');
     users.push({ name: 'Owner', role: 'Owner', email: DW_ADMIN_EMAIL, salt, pass: dwHash(DW_SEED_PASSWORD, salt), verified: true, created: new Date().toISOString() });
     await dwSaveUsers(users); console.log('[DW-AUTH] seeded owner account');
   }
@@ -933,11 +995,11 @@ app.post('/dw/api/register', express.json(), async (req, res) => {
     const password = String(req.body.password || '');
     if (!name || !role) return res.json({ error: 'Add your full name and role' });
     if (!new RegExp('^[a-z0-9._%+-]+@' + DW_ALLOWED_DOMAIN.replace(/\./g, '\\.') + '$').test(email)) return res.json({ error: 'Registration is open to @' + DW_ALLOWED_DOMAIN + ' email addresses only' });
-    if (password.length < 6) return res.json({ error: 'Password needs at least 6 characters' });
+    if (password.length < 10) return res.json({ error: 'Password needs at least 10 characters' });
     const users = await dwUsers();
     const ex = users.find(u => u.email === email);
     if (ex && ex.verified) return res.json({ error: 'This email is already registered - sign in instead' });
-    const salt = crypto.randomBytes(8).toString('hex');
+    const salt = crypto.randomBytes(16).toString('hex');
     const vtoken = crypto.randomBytes(18).toString('hex');
     const rec = { name, role, email, salt, pass: dwHash(password, salt), verified: false, vtoken, created: new Date().toISOString() };
     if (ex) Object.assign(ex, rec); else users.push(rec);
@@ -961,9 +1023,11 @@ app.post('/dw/api/login', express.json(), async (req, res) => {
   try {
     const email = String(req.body.email || '').trim().toLowerCase();
     const password = String(req.body.password || '');
+    if (!loginAllowed(email)) return res.status(429).json({ error: 'Too many failed sign-ins - this account is paused for 15 minutes' });
     const users = await dwUsers();
     const u = users.find(x => x.email === email);
-    if (!u || dwHash(password, u.salt) !== u.pass) return res.json({ error: 'Wrong email or password' });
+    if (!u || dwHash(password, u.salt) !== u.pass) { loginFailed(email); return res.json({ error: 'Wrong email or password' }); }
+    loginOk(email);
     if (!u.verified) return res.json({ error: 'Please verify your email first - check your inbox' });
     u.lastLogin = new Date().toISOString(); await dwSaveUsers(users);
     const tok = jwt.sign({ email: u.email, name: u.name, role: u.role }, DW_AUTH_SECRET, { expiresIn: '14d' });
@@ -990,10 +1054,10 @@ app.post('/dw/api/forgot', express.json(), async (req, res) => {
 app.post('/dw/api/reset', express.json(), async (req, res) => {
   try {
     const token = String(req.body.token || ''); const password = String(req.body.password || '');
-    if (password.length < 6) return res.json({ error: 'Password needs at least 6 characters' });
+    if (password.length < 10) return res.json({ error: 'Password needs at least 10 characters' });
     const users = await dwUsers(); const u = token && users.find(x => x.rtoken === token);
     if (!u || !u.rtokenExp || u.rtokenExp < Date.now()) return res.json({ error: 'This reset link has expired or was already used - request a new one.' });
-    u.salt = crypto.randomBytes(8).toString('hex'); u.pass = dwHash(password, u.salt); delete u.rtoken; delete u.rtokenExp;
+    u.salt = crypto.randomBytes(16).toString('hex'); u.pass = dwHash(password, u.salt); delete u.rtoken; delete u.rtokenExp;
     u.verified = true; delete u.vtoken; // owning the inbox proves the address
     await dwSaveUsers(users); console.log('[DW-AUTH] password reset for', u.email);
     res.json({ ok: true });

@@ -20,7 +20,7 @@ const RCS_APP_ID = process.env.VONAGE_APP_ID || '';
 const RCS_SENDER = process.env.RCS_SENDER || '';
 const PRIVATE_KEY = (() => { try { return fs.readFileSync(path.join(__dirname, process.env.VONAGE_PRIVATE_KEY_FILE || 'private.key'), 'utf8'); } catch (e) { return process.env.VONAGE_PRIVATE_KEY || ''; } })();
 
-router.use('/img', express.static(path.join(__dirname, 'public', 'wf-img'), { maxAge: '1d' }));
+router.use('/img', (req, res) => res.redirect(302, (process.env.ASSET_BASE || '') + '/wf-img' + req.path));
 
 // ---------------------------------------------------------------------------
 const DEALS = {

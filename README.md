@@ -1,5 +1,7 @@
 # Vonage Demo-World
 
+> Personal open-source project by a Vonage solutions architect, published under the MIT licence. It is not an official Vonage product and is not supported by Vonage. Product names of the demo scenarios belong to their owners; no brand artwork or product data is distributed with the code.
+
 Demo-World is an internal live-demo platform: a Vonage employee signs in, picks a customer scenario and runs a real Vonage API against their own phone in seconds. Messaging (RCS, WhatsApp, SMS, Viber), Verify v2, Voice, Video and Number Insight demos call the production Vonage platform; the Network API and Identity tiles are client-side simulators.
 
 The architecture summary (diagram, languages, design system, webhooks, security, deployment) is in `docs/Vonage-Demo-World-Architecture.pdf`.
@@ -49,6 +51,16 @@ Point the Vonage applications at the running instance:
 ## Satellite instances
 
 Each folder under `vcr/` is an independent Vonage Cloud Runtime project with its own `vcr.example.yml`. Copy it to `vcr.yml`, set the application id and environment values, then deploy with `vcr deploy`. Set the resulting URLs in the main app's `.env` (`AVON_SKIN_URL`, `OPTOUT_URL`, `ASSET_BASE` for the media host).
+
+## Security controls
+
+- HTTPS is expected at the edge; HSTS, CSP, X-Frame-Options, Referrer-Policy and X-Content-Type-Options headers are set on every response.
+- Registration is limited to the configured email domain and gated by mailbox verification; passwords are hashed with scrypt and a per-user random salt, minimum 10 characters.
+- Sessions are signed HttpOnly, SameSite cookies. Every `/dw/api/*` call needs a verified session except the auth endpoints; the admin console is bound to the owner account.
+- Login throttling: 10 auth attempts per minute per address, and a 15-minute account pause after 8 failed sign-ins.
+- Demo actions are rate limited per address and per user (per minute and per day, see `DW_RATE_*`) and every action is written to the audit log with the user, path, demo and a masked destination.
+- Inbound Vonage webhooks are verified when `VONAGE_SIGNATURE_SECRET` is set (signed JWT in the Authorization header, payload hash check, five-minute freshness); unsigned or stale payloads are rejected.
+- Reset and verification tokens are random, single use and time-boxed. No customer data is stored; multi-step demo state expires.
 
 ## State
 

@@ -12,7 +12,7 @@ const path = require('path');
 
 const app = express();
 app.use(express.json({ limit: '25mb' }));
-app.use('/img', express.static(path.join(__dirname, 'public', 'img'), { maxAge: '1d' }));
+app.use('/img', (req, res) => res.redirect(302, (process.env.ASSET_BASE || '') + '/skin-img' + req.path)); // product/brand images live on ASSET_BASE, not in the repo
 
 const PORT = process.env.NERU_APP_PORT || process.env.PORT || 3000;
 const BASE_URL = process.env.BASE_URL || 'https://<your-vcr-avon-skin-instance>';
