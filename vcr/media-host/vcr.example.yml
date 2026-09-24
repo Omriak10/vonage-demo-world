@@ -1,0 +1,10 @@
+project:
+    name: takeme-videos
+instance:
+    name: production
+    runtime: nodejs22
+    region: aws.euw1
+    application-id: <your-vonage-application-id>
+    entrypoint: [node, server.js]
+    scaling:
+        min-scale: 1

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>What is rich messaging</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--muted:#6b6b76;--line:#e8e8ee;--violet:#0d0d0d;--lav:#bdbdc6;--bg:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;padding:22px 20px 44px}
+.eyebrow{font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
+h1{font:700 28px/1.1 'Space Grotesk',sans-serif;margin:8px 0 8px;letter-spacing:-.02em}
+.lead{color:var(--muted);margin:0 0 18px}
+.blk{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:14px 0}
+.blk img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.blk .b{padding:14px 16px}.blk h2{margin:0 0 4px;font:700 17px 'Space Grotesk',sans-serif}.blk p{margin:0;color:var(--muted);font-size:14px}
+.n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font:700 12px Inter;margin-right:8px;vertical-align:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.chip{border:1.5px solid var(--violet);color:var(--violet);border-radius:999px;padding:5px 11px;font:600 12.5px Inter}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.stat div{border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center}.stat b{display:block;font:700 22px 'Space Grotesk',sans-serif;color:var(--violet)}.stat span{font-size:11.5px;color:var(--muted)}
+.code{background:#0d0d0d;color:#e9e6f5;border-radius:12px;padding:12px 14px;font:12px/1.5 ui-monospace,Menlo,monospace;overflow:auto;white-space:pre}
+.bill{border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:22px}.bill h2{margin:0 0 10px;font:700 17px 'Space Grotesk',sans-serif}
+.bill .row{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.bill .row.t{font-weight:700}
+.paid{display:inline-block;background:#f0f0f2;color:#0d0d0d;border-radius:999px;padding:3px 10px;font:600 12px Inter}
+a.btn{display:inline-block;margin-top:16px;background:var(--ink);color:#fff;border-radius:999px;padding:10px 16px;font:600 13.5px Inter;text-decoration:none}
+.vlogo{display:block;padding:16px 20px 0}.vlogo img{height:22px;width:auto;display:block}</style></head><body><a class="vlogo" href="https://www.vonage.com" target="_blank" rel="noopener"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg" alt="Vonage"></a><div class="wrap">
+<div class="eyebrow">The 60-second explainer</div>
+<h1>What is rich messaging?</h1>
+<p class="lead">RCS is the successor to SMS: it lives in the phone's default messaging app, with no download, but behaves like a branded app. Vonage sends it through the same Messages API you use for WhatsApp, SMS and Viber.</p>
+<div class="stat"><div><b>10</b><span>cards per carousel</span></div><div><b>4</b><span>actions per card</span></div><div><b>SMS</b><span>automatic fallback</span></div></div>
+<div class="blk"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/peak/rcs-verified.jpg" alt=""><div class="b"><h2><span class="n">1</span>A verified sender</h2><p>Your brand name, logo, colour and a verified badge on every message. Customers know it is really you, which lifts open and reply rates and cuts smishing risk.</p></div></div>
+<div class="blk"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/peak/rcs-cards.jpg" alt=""><div class="b"><h2><span class="n">2</span>Rich cards and carousels</h2><p>Photo, title, description and buttons in one card. Swipe through up to ten in a carousel: products, sessions, seats, offers.</p><div class="chips"><span class="chip">Shop</span><span class="chip">Add to basket</span><span class="chip">Details</span></div></div></div>
+<div class="blk"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/peak/rcs-actions.jpg" alt=""><div class="b"><h2><span class="n">3</span>Suggested actions</h2><p>One tap to call, open a map, add to calendar, share a location, or open a webview like this one without leaving the conversation. Every tap comes back to you as a postback, so you can track it.</p></div></div>
+<div class="blk"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/peak/rcs-analytics.jpg" alt=""><div class="b"><h2><span class="n">4</span>Delivered, read, replied</h2><p>Delivery and read receipts, typing indicators and replies flow back over webhooks. If a handset has no RCS, Vonage sends the SMS version automatically.</p></div></div>
+<h2 style="font:700 17px 'Space Grotesk',sans-serif;margin:22px 0 8px">One API call</h2>
+<div class="code">POST https://api.nexmo.com/v1/messages
+{ "from": "your RCS agent", "to": "4477...", "channel": "rcs",
+  "message_type": "custom",
+  "custom": { "contentMessage": { "richCard": { "carouselCard": {
+    "cardWidth": "MEDIUM", "cardContents": [ ... up to 10 cards ... ] } } } } }</div>
+<a class="btn" href="https://developer.vonage.com/en/messages/concepts/rcs" target="_blank" rel="noopener">RCS on developer.vonage.com</a>
+<div class="bill"><h2>Who is already doing this</h2><p style="margin:0 0 10px;color:var(--muted);font-size:13.5px">Aramex, Vinted, Revolut, Grab, Zalora, Kiwi.com and hundreds more run their customer messaging on Vonage.</p><a class="btn" href="https://www.vonage.com/resources/customers/" target="_blank" rel="noopener">Customer stories on vonage.com</a></div>
+</div></body></html>

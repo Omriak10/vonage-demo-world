@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Web Dialer · Vonage Demo-World</title>
+<link rel="icon" href="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{--ink:#0a0a0a;--bg:#ffffff;--line:#e8e8eb;--grey:#6e6e78;--green:#12b76a;--red:#e5484d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.nav{display:flex;align-items:center;gap:14px;padding:15px 22px;border-bottom:1px solid var(--line)}
+.nav img{height:18px}.nav b{font-weight:600;font-size:14px;border-left:1px solid var(--line);padding-left:11px}
+.nav .sp{flex:1}.nav a.back{color:#4a4a52;font-weight:600;font-size:13.5px}.nav a.back:hover{color:var(--ink)}
+.wrap{max-width:420px;margin:0 auto;padding:30px 20px 60px}
+.lead{text-align:center;margin-bottom:22px}
+.lead h1{font-family:'Space Grotesk';font-size:24px;font-weight:700;letter-spacing:-.02em}
+.lead p{color:var(--grey);font-size:14px;margin-top:6px}
+.phone{background:var(--ink);border-radius:26px;padding:26px 22px 24px;color:#fff;box-shadow:0 24px 60px rgba(10,10,10,.28)}
+.stat{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;color:#b9b9c2;font-weight:600;letter-spacing:.02em;margin-bottom:16px;min-height:18px}
+.dot{width:8px;height:8px;border-radius:50%;background:#5a5a63;transition:.2s}
+.dot.ready{background:var(--green)}.dot.live{background:var(--green);box-shadow:0 0 0 4px #12b76a44;animation:pulse 1.4s infinite}
+.dot.err{background:var(--red)}
+@keyframes pulse{50%{box-shadow:0 0 0 8px #12b76a11}}
+.num{width:100%;background:none;border:none;color:#fff;font-family:'Space Grotesk';font-size:30px;font-weight:600;text-align:center;letter-spacing:.02em;outline:none;padding:6px 0 4px}
+.num::placeholder{color:#5a5a63}
+.hint{text-align:center;color:#8a8a93;font-size:11.5px;margin:2px 0 18px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.key{background:#1b1b1f;border:none;color:#fff;font-size:22px;font-weight:600;font-family:'Space Grotesk';padding:15px 0;border-radius:16px;cursor:pointer;transition:.12s}
+.key:hover{background:#26262b}.key:active{transform:scale(.95)}
+.key small{display:block;font-size:8.5px;letter-spacing:.18em;color:#7a7a83;font-weight:700;margin-top:2px;font-family:'Inter'}
+.actions{display:flex;align-items:center;justify-content:center;gap:16px}
+.cbtn{border:none;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:.14s}
+.cbtn:active{transform:scale(.93)}
+.call{width:66px;height:66px;background:var(--green)}.call:hover{background:#0ea15c}
+.hang{width:66px;height:66px;background:var(--red)}.hang:hover{background:#d13b40}
+.mini{width:50px;height:50px;background:#1b1b1f}.mini:hover{background:#26262b}.mini.on{background:#fff;color:var(--ink)}
+.cbtn svg{width:26px;height:26px;fill:#fff}.mini svg{width:21px;height:21px}.mini.on svg{fill:var(--ink)}
+.back-btn{background:#1b1b1f;border:none;color:#8a8a93;width:34px;height:34px;border-radius:11px;font-size:20px;cursor:pointer}
+.padtop{display:flex;justify-content:flex-end;margin-bottom:6px}
+.foot{text-align:center;color:var(--grey);font-size:12px;margin-top:20px;line-height:1.6}
+.foot b{color:var(--ink)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="nav"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"><b>Web Dialer</b><div class="sp"></div><a class="back" href="/demoworld">← Back to demos</a></div>
+<div class="wrap">
+  <div class="lead"><h1>Call &amp; speak from the browser</h1><p>No phone needed. Your laptop mic becomes the handset - Vonage bridges the call to any real number.</p></div>
+  <div class="phone">
+    <div class="stat"><span class="dot" id="dot"></span><span id="stat">Tap a number, then call</span></div>
+    <input class="num" id="num" value="+44" inputmode="tel" autocomplete="off"/>
+    <div class="padtop"><button class="back-btn" id="del">⌫</button></div>
+    <div class="pad" id="pad"></div>
+    <div class="actions" id="actions">
+      <button class="cbtn call" id="callBtn" title="Call"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg></button>
+    </div>
+    <div class="actions hide" id="liveActions">
+      <button class="cbtn mini" id="muteBtn" title="Mute"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-2.1A7 7 0 0 0 19 12h-2z"/></svg></button>
+      <button class="cbtn hang" id="hangBtn" title="Hang up"><svg viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.1.2-4.6.7v3.1c0 .4-.2.7-.5.9-.9.4-1.7 1-2.5 1.6-.2.2-.4.3-.7.3-.3 0-.5-.1-.7-.3l-2.5-2.5a1 1 0 0 1 0-1.4C3.9 8.5 7.8 7 12 7s8.1 1.5 11 4.7c.4.4.4 1 0 1.4l-2.5 2.5c-.2.2-.4.3-.7.3-.3 0-.5-.1-.7-.3-.8-.7-1.6-1.2-2.5-1.6-.3-.2-.5-.5-.5-.9v-3.1C15.1 9.2 13.6 9 12 9z"/></svg></button>
+    </div>
+    <div class="actions hide" id="inActions">
+      <button class="cbtn call" id="answerBtn" title="Answer"><svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg></button>
+      <button class="cbtn hang" id="declineBtn" title="Decline"><svg viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.1.2-4.6.7v3.1c0 .4-.2.7-.5.9-.9.4-1.7 1-2.5 1.6-.2.2-.4.3-.7.3-.3 0-.5-.1-.7-.3l-2.5-2.5a1 1 0 0 1 0-1.4C3.9 8.5 7.8 7 12 7s8.1 1.5 11 4.7c.4.4.4 1 0 1.4l-2.5 2.5c-.2.2-.4.3-.7.3-.3 0-.5-.1-.7-.3-.8-.7-1.6-1.2-2.5-1.6-.3-.2-.5-.5-.5-.9v-3.1C15.1 9.2 13.6 9 12 9z"/></svg></button>
+    </div>
+  </div>
+  <div class="foot" id="foot"><b>Two-way, live over the Vonage Voice API.</b><br>Dial out from the browser - or call <b>+44 7441 445920</b> from your phone and answer right here.</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/nexmo-client@latest/dist/nexmoClient.js"></script>
+<script>
+// Mic requires a secure context - force the CloudFront https origin.
+if (location.protocol !== 'https:' && !location.hostname.includes('localhost')) {
+  location.replace(location.origin+'/demoworld-webcall.html' + location.search);
+}
+const $ = s => document.querySelector(s);
+const numEl = $('#num'), statEl = $('#stat'), dotEl = $('#dot');
+let app = null, call = null, muted = false, dialing = false, incoming = null;
+let ringer = null;
+function startRing(){ try{ ringer = new AudioContext(); const play=()=>{ if(!ringer) return; const o=ringer.createOscillator(), g=ringer.createGain(); o.frequency.value=440; g.gain.value=.08; o.connect(g); g.connect(ringer.destination); o.start(); setTimeout(()=>{try{o.stop()}catch(e){}} ,900); setTimeout(play, 2400); }; play(); }catch(e){} }
+function stopRing(){ try{ if(ringer){ ringer.close(); ringer=null; } }catch(e){} }
+function setStat(s, cls){ statEl.textContent = s; dotEl.className = 'dot ' + (cls||''); }
+// dialpad
+const KEYS = [['1',''],['2','ABC'],['3','DEF'],['4','GHI'],['5','JKL'],['6','MNO'],['7','PQRS'],['8','TUV'],['9','WXYZ'],['*',''],['0','+'],['#','']];
+$('#pad').innerHTML = KEYS.map(([k,s])=>`<button class="key" data-k="${k}">${k}<small>${s}</small></button>`).join('');
+document.querySelectorAll('.key').forEach(b=>b.onclick=()=>{ numEl.value += b.dataset.k; });
+$('#del').onclick = ()=>{ numEl.value = numEl.value.slice(0,-1); };
+
+async function ensureApp(){
+  if (app) return app;
+  if (typeof NexmoClient === 'undefined') { setStat('Dialer failed to load', 'err'); throw new Error('SDK missing'); }
+  setStat('Connecting...', '');
+  const r = await fetch('/dw/api/voice-jwt');
+  const d = await r.json();
+  if (!d.token) throw new Error(d.error || 'No token');
+  const client = new NexmoClient({ debug:false });
+  app = await client.createSession(d.token);
+  app.on('member:call', (m, c)=>{
+    // an inbound ring (someone called the web line) vs. the echo of our own outbound
+    if (!dialing && !call){ incoming = c; wire(c); incomingUI(c); return; }
+    call = c; wire(c);
+  });
+  setStat('Ready - your web line: +44 7441 445920', 'ready');
+  return app;
+}
+function wire(c){
+  c.on('call:status:changed', (x)=>{
+    const s = x.status;
+    if (s === 'answered'){ setStat('Connected - you are live', 'live'); }
+    else if (['completed','rejected','failed','busy','unanswered','timeout','cancelled'].includes(s)){
+      setStat(s === 'completed' ? 'Call ended' : ('Call ' + s), 'ready'); endUI();
+    } else setStat(s.charAt(0).toUpperCase()+s.slice(1)+'...', 'live');
+  });
+}
+function liveUI(){ $('#actions').classList.add('hide'); $('#inActions').classList.add('hide'); $('#liveActions').classList.remove('hide'); }
+function endUI(){ $('#liveActions').classList.add('hide'); $('#inActions').classList.add('hide'); $('#actions').classList.remove('hide'); call=null; incoming=null; dialing=false; muted=false; stopRing(); $('#muteBtn').classList.remove('on'); setTimeout(()=>{ if(!call) setStat('Ready - your web line: +44 7441 445920','ready'); }, 1800); }
+function incomingUI(c){
+  const who = (c && (c.from || (c.conversation && c.conversation.display_name))) || 'a caller';
+  setStat('Incoming call...', 'live');
+  numEl.value = String(who).replace(/[^0-9+]/g,'') || 'Incoming';
+  $('#actions').classList.add('hide'); $('#liveActions').classList.add('hide'); $('#inActions').classList.remove('hide');
+  startRing();
+}
+$('#answerBtn').onclick = async ()=>{ if(!incoming) return; stopRing(); try{ await incoming.answer(); call=incoming; incoming=null; liveUI(); setStat('Connected - you are live','live'); }catch(e){ setStat('Answer failed: '+(e.message||e),'err'); endUI(); } };
+$('#declineBtn').onclick = ()=>{ if(incoming){ try{ incoming.reject(); }catch(e){} } endUI(); };
+
+$('#callBtn').onclick = async ()=>{
+  const digits = numEl.value.replace(/\D/g,'');
+  if (digits.length < 7){ setStat('Enter a full number', 'err'); return; }
+  try {
+    dialing = true;
+    await ensureApp();
+    setStat('Calling ' + numEl.value + '...', 'live');
+    liveUI();
+    call = await app.callServer(digits, 'phone', { to: digits });
+    wire(call);
+    dialing = false;
+  } catch(e){ setStat('Call failed: ' + (e.message||e), 'err'); endUI(); }
+};
+$('#hangBtn').onclick = ()=>{ if (call) try{ call.hangUp(); }catch(e){} setStat('Call ended', 'ready'); endUI(); };
+$('#muteBtn').onclick = ()=>{
+  if (!call) return;
+  muted = !muted;
+  try { muted ? call.mute() : call.unmute(); } catch(e){}
+  $('#muteBtn').classList.toggle('on', muted);
+  setStat(muted ? 'Muted' : 'Connected - you are live', 'live');
+};
+// warm up the session so the first call connects fast + mic permission is prompted early
+ensureApp().catch(()=>{});
+</script>
+</body>
+</html>

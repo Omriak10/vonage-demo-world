@@ -1,0 +1,13 @@
+project:
+    name: optout-manager
+instance:
+    name: production
+    runtime: nodejs22
+    region: aws.euw1
+    application-id: <your-vonage-application-id>
+    entrypoint: [node, server.js]
+    scaling:
+        min-scale: 1
+    environment:
+        - name: OPTOUT_PUBLIC_BASE
+          value: "https://<your-vcr-optout-manager-instance>"

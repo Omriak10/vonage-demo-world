@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Memory match</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--muted:#6b6b76;--line:#e8e8ee;--violet:#0d0d0d;--lav:#bdbdc6}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:480px;margin:0 auto;padding:18px 16px 30px}
+.eyebrow{font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
+h1{font:700 24px/1.1 'Space Grotesk',sans-serif;margin:6px 0 4px}p.l{color:var(--muted);margin:0 0 14px;font-size:14px}
+.hud{display:flex;gap:8px;margin-bottom:12px}.hud div{flex:1;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center}.hud b{display:block;font:700 20px 'Space Grotesk',sans-serif}.hud span{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.c{aspect-ratio:1;perspective:600px;cursor:pointer}.c .in{position:relative;width:100%;height:100%;transition:transform .35s;transform-style:preserve-3d}
+.c.f .in,.c.m .in{transform:rotateY(180deg)}
+.c .a,.c .b{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;display:grid;place-items:center;font:700 12px/1.1 'Space Grotesk',sans-serif;text-align:center;padding:6px}
+.c .a{background:var(--ink);color:var(--lav);font-size:22px}.c .b{background:#fff;border:2px solid var(--violet);color:var(--ink);transform:rotateY(180deg)}
+.c.m .b{background:var(--violet);color:#fff;border-color:var(--violet)}
+.done{display:none;margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}.done b{font:700 18px 'Space Grotesk',sans-serif;display:block}.done p{margin:6px 0 10px;color:var(--muted);font-size:13.5px}
+.btn{border:1.5px solid var(--ink);background:var(--ink);color:#fff;border-radius:999px;padding:9px 16px;font:600 13.5px Inter;cursor:pointer}
+@media(prefers-reduced-motion:reduce){.c .in{transition:none}}
+.vlogo{display:block;padding:16px 20px 0}.vlogo img{height:22px;width:auto;display:block}</style></head><body><a class="vlogo" href="https://www.vonage.com" target="_blank" rel="noopener"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg" alt="Vonage"></a><div class="wrap">
+<div class="eyebrow">The RCS game</div><h1>Memory match</h1><p class="l">Find the six Vonage API pairs. Fewest moves wins, and your score lands back in the chat.</p>
+<div class="hud"><div><b id="mv">0</b><span>moves</span></div><div><b id="tm">0s</b><span>time</span></div><div><b id="pr">0/6</b><span>pairs</span></div></div>
+<div class="grid" id="g"></div>
+<div class="done" id="done"><b id="dt"></b><p id="dp"></p><button class="btn" onclick="location.reload()">Play again</button></div>
+<script>
+const q=new URLSearchParams(location.search);const TO=q.get('to')||'',CH=q.get('ch')||'rcs';
+const API=['RCS','WhatsApp','SMS','Verify','Voice','Video'];
+let deck=API.concat(API).sort(()=>Math.random()-.5),open=[],moves=0,pairs=0,t0=null,timer=null,lock=false;
+const g=document.getElementById('g');
+deck.forEach((v,i)=>{const d=document.createElement('div');d.className='c';d.dataset.v=v;d.innerHTML='<div class="in"><div class="a">V</div><div class="b">'+v+'</div></div>';d.onclick=()=>flip(d);g.appendChild(d)});
+function tick(){document.getElementById('tm').textContent=Math.round((Date.now()-t0)/1000)+'s'}
+function flip(d){if(lock||d.classList.contains('f')||d.classList.contains('m'))return;if(!t0){t0=Date.now();timer=setInterval(tick,500)}
+ d.classList.add('f');open.push(d);if(open.length<2)return;moves++;document.getElementById('mv').textContent=moves;
+ const [a,b]=open;open=[];if(a.dataset.v===b.dataset.v){a.classList.add('m');b.classList.add('m');pairs++;document.getElementById('pr').textContent=pairs+'/6';if(pairs===6)finish();}
+ else{lock=true;setTimeout(()=>{a.classList.remove('f');b.classList.remove('f');lock=false},650)}}
+function finish(){clearInterval(timer);tick();const secs=Math.round((Date.now()-t0)/1000);const box=document.getElementById('done');box.style.display='block';
+ document.getElementById('dt').textContent=moves+' moves in '+secs+' seconds';document.getElementById('dp').textContent=moves<=10?'Elite. Your score is on its way to the chat.':moves<=16?'Solid. Score sent to the chat.':'Warmed up. Score sent to the chat, try again for a better time.';
+ if(TO)fetch('/dw/peak/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:TO,ch:CH,moves,secs})}).catch(()=>{})}
+</script></div></body></html>

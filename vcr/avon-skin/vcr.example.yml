@@ -1,0 +1,19 @@
+project:
+    name: avon-skin
+instance:
+    name: production
+    runtime: nodejs22
+    region: aws.euw1
+    application-id: <your-vonage-application-id>
+    entrypoint: [node, server.js]
+    scaling:
+        min-scale: 1
+    environment:
+        - name: GEMINI_API_KEY
+          value: "<gemini-api-key>"
+        - name: RCS_APP_ID
+          value: "<your-vonage-application-id>"
+        - name: RCS_SENDER
+          value: "<your-rcs-agent-id>"
+        - name: BASE_URL
+          value: "https://<your-vcr-avon-skin-instance>"

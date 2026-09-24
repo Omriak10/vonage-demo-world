@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>RCS Testers · Vonage Demo-World</title>
+<link rel="icon" href="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{--ink:#0a0a0a;--bg:#ffffff;--line:#e8e8eb;--grey:#6e6e78;--green:#12b76a;--red:#e5484d;--amber:#b45309}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.nav{display:flex;align-items:center;gap:14px;padding:15px 22px;border-bottom:1px solid var(--line)}
+.nav img{height:18px}.nav b{font-weight:600;font-size:14px;border-left:1px solid var(--line);padding-left:11px}
+.nav .sp{flex:1}.nav a.back{color:#4a4a52;font-weight:600;font-size:13.5px}.nav a.back:hover{color:var(--ink)}
+.wrap{max-width:660px;margin:0 auto;padding:34px 20px 70px}
+h1{font-family:'Space Grotesk';font-size:26px;font-weight:700;letter-spacing:-.02em}
+.lead{color:var(--grey);font-size:14px;margin:6px 0 20px;max-width:560px;line-height:1.55}
+.agent{display:flex;align-items:center;gap:12px;background:#fafafb;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:20px}
+.agent .am{width:38px;height:38px;border-radius:10px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex:none}
+.agent b{font-size:14px}
+.agent .st{margin-left:auto;font-size:10.5px;font-weight:800;letter-spacing:.05em;border-radius:100px;padding:5px 11px;background:#fff7e0;color:var(--amber);border:1px solid #f0e2b8}
+.agent small{display:block;color:var(--grey);font-size:11.5px;margin-top:1px}
+.addrow{display:flex;gap:9px;margin-bottom:8px}
+.addrow input{flex:1;border:1px solid var(--line);border-radius:11px;padding:12px 14px;font-size:14px;font-family:inherit;outline:none}
+.addrow input:focus{border-color:var(--ink)}
+.addrow button{background:var(--ink);color:#fff;border:none;border-radius:11px;padding:12px 20px;font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
+.addrow button:hover{background:#000}.addrow button:disabled{opacity:.55}
+.msg{font-size:13px;font-weight:600;margin:6px 0 14px;min-height:18px}
+.msg.ok{color:#0e8a51}.msg.bad{color:var(--red)}
+.hint{background:#fafafb;border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:11px 14px;font-size:12.5px;color:#4a4a52;margin:14px 0 22px;line-height:1.55}
+.tbl{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.trow{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #f2f2f4;font-size:13.5px}
+.trow:last-child{border-bottom:none}
+.trow .ph{font-weight:700;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.trow .dt{color:var(--grey);font-size:11.5px}
+.chip{font-size:10px;font-weight:800;letter-spacing:.04em;border-radius:100px;padding:4px 10px}
+.chip.acc{background:#12b76a1a;color:#0e8a51}
+.chip.pend{background:#fff7e0;color:var(--amber)}
+.rm{margin-left:auto;background:#f6f6f7;border:none;border-radius:8px;padding:7px 13px;font-weight:700;font-size:12px;cursor:pointer;color:#a02;font-family:inherit}
+.rm:hover{background:#fdecec}
+.empty{padding:26px;text-align:center;color:var(--grey);font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="nav"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"><b>RCS Testers</b><div class="sp"></div><a class="back" href="/demoworld-templates.html">Template Creator</a><a class="back" href="/demoworld">← Back to demos</a></div>
+<div class="wrap">
+  <h1>RCS test devices</h1>
+  <p class="lead">While the RCS sender is pre-launch, messages only reach approved test devices. Add a number here - Google sends an invite to that phone in Google Messages, and once they tap <b>“Make me a tester”</b> the demos deliver.</p>
+  <div class="agent" id="agent"><div class="am">V</div><div><b>Loading agent…</b></div></div>
+  <div class="addrow"><input id="newnum" placeholder="+44 7700 900123" inputmode="tel"><button id="addbtn" onclick="add()">Add tester</button></div>
+  <div class="msg" id="msg"></div>
+  <div class="tbl" id="tbl"><div class="empty">Loading testers…</div></div>
+  <div class="hint"><b>Checklist for the new tester:</b> Android phone · RCS chats turned on in Google Messages · accept the “Become a tester” invite that arrives after you add them. iPhones cannot be RCS testers.</div>
+</div>
+<script>
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(p,body,method){const r=await fetch(p,{method:method||(body?'POST':'GET'),headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return r.json();}
+function setMsg(t,cls){const m=document.getElementById('msg');m.textContent=t;m.className='msg '+(cls||'');}
+async function load(){
+  const d=await api('/dw/api/rcs/testers');
+  const ag=document.getElementById('agent');
+  if(d.error){ag.innerHTML='<div class="am">!</div><div><b>Could not load</b><small>'+esc(d.error)+'</small></div>';return;}
+  ag.innerHTML='<div class="am">V</div><div><b>'+esc(d.agent.sender||'RCS agent')+'</b><small>Channel Manager agent · '+esc(d.agent.id||'')+'</small></div><span class="st">'+esc(d.agent.state||'')+'</span>';
+  const tb=document.getElementById('tbl');
+  if(!d.testers.length){tb.innerHTML='<div class="empty">No test devices yet - add the first one above.</div>';return;}
+  tb.innerHTML=d.testers.map(t=>`<div class="trow">
+    <span class="ph">${esc(t.phone)}</span>
+    <span class="chip ${String(t.status).toUpperCase()==='ACCEPTED'?'acc':'pend'}">${esc(t.status||'INVITED')}</span>
+    <span class="dt">added ${esc(String(t.created_at||'').slice(0,10))}</span>
+    <button class="rm" onclick="rm('${esc(t.id)}','${esc(t.phone)}')">Remove</button>
+  </div>`).join('');
+}
+async function add(){
+  const inp=document.getElementById('newnum');const b=document.getElementById('addbtn');
+  const n=(inp.value||'').replace(/\D/g,'');
+  if(n.length<9){setMsg('Enter the full number in international format.','bad');return;}
+  b.disabled=true;setMsg('Sending the tester invite…','');
+  const r=await api('/dw/api/rcs/testers',{phone:n});
+  b.disabled=false;
+  if(r.ok){setMsg('Invite sent to +'+n+' - it must be accepted in Google Messages on that phone.','ok');inp.value='';load();}
+  else setMsg(r.error||'Could not add tester.','bad');
+}
+async function rm(id,phone){
+  if(!confirm('Remove '+phone+' as a tester? They will stop receiving RCS demos and would need a new invite to return.'))return;
+  setMsg('Removing…','');
+  const r=await api('/dw/api/rcs/testers/remove',{id});
+  if(r.ok){setMsg('Removed '+phone+'.','ok');load();}
+  else setMsg(r.error||'Could not remove tester.','bad');
+}
+document.getElementById('newnum').addEventListener('keydown',e=>{if(e.key==='Enter')add();});
+load();
+</script>
+</body>
+</html>

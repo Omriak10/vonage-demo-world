@@ -1,0 +1,12 @@
+{
+  "name": "avon-skin",
+  "version": "1.0.0",
+  "description": "Avon Skin Coach - AI skin-analysis RCS bot + mini storefront on VCR",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "@vonage/vcr-sdk": "^2.1.5",
+    "express": "^4.19.2",
+    "uuid": "^9.0.1"
+  }
+}

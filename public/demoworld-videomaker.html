@@ -1,0 +1,312 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RCS Demo Video Maker - Vonage Demo-World</title>
+<link rel="icon" href="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#0a0a0a;--bg:#fff;--card:#fff;--line:#e8e8eb;--grey:#6e6e78;--green:#12b76a}
+body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+.nav{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:22px;padding:15px 26px}
+.nav .logo{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink)}
+.nav .logo img{height:18px}
+.nav .logo b{font-weight:600;font-size:14px;letter-spacing:.01em;border-left:1px solid var(--line);padding-left:11px}
+.nav .sp{flex:1}
+.nav a.nlink{color:var(--grey);text-decoration:none;font-size:13.5px;font-weight:600}
+.nav a.nlink:hover{color:var(--ink)}
+.hero{padding:44px 26px 26px;border-bottom:1px solid var(--line);text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);color:#4a4a52;font-weight:600;font-size:12.5px;padding:6px 14px;border-radius:100px}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #12b76a22}
+h1.big{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,4.4vw,46px);line-height:1.05;font-weight:700;letter-spacing:-.025em;margin:16px 0 10px}
+h1.big em{font-style:normal;box-shadow:inset 0 -0.32em 0 #12b76a33}
+.hero p{color:var(--grey);font-size:15px;max-width:640px;margin:0 auto}
+.wrap{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap;justify-content:center;padding:30px 26px 60px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;width:440px}
+.panel h2{font-family:'Space Grotesk',sans-serif;font-size:16px;margin-bottom:10px}
+.panel h2 span{color:var(--grey);font-family:'Inter';font-weight:400;font-size:11.5px}
+label{display:block;font-size:11.5px;color:var(--grey);font-weight:600;margin:12px 0 5px;letter-spacing:.02em;text-transform:uppercase}
+input[type=text],textarea,select{width:100%;background:#fff;border:1px solid #d9d9de;border-radius:10px;color:var(--ink);padding:10px 13px;font:inherit;font-size:13.5px}
+input:focus,textarea:focus{outline:none;border-color:var(--ink)}
+textarea{min-height:110px;resize:vertical}
+input[type=color]{width:46px;height:32px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;vertical-align:middle}
+.btn{background:var(--ink);border:0;color:#fff;font:inherit;font-weight:600;font-size:13.5px;border-radius:100px;padding:11px 20px;cursor:pointer;margin-top:14px;transition:opacity .15s}
+.btn:hover{opacity:.85}.btn.sec{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.iconprev{width:46px;height:46px;border-radius:50%;background:#fff;border:1px solid var(--line);display:inline-grid;place-items:center;overflow:hidden;vertical-align:middle;margin-left:10px}
+.iconprev img{width:32px;height:32px;object-fit:contain}
+.msg{background:#fafafb;border:1px solid var(--line);border-radius:12px;padding:12px;margin:9px 0;font-size:12.5px}
+.msg .k{font-size:10px;font-weight:800;letter-spacing:.07em;color:var(--green);text-transform:uppercase}
+.msg .k.cust{color:#2b8bff}
+.msg textarea{min-height:46px;margin-top:6px;background:#fff}
+.msg input{margin-top:6px;background:#fff}
+.msg .row{display:flex;gap:8px;align-items:center;margin-top:4px}
+.msg .del{margin-left:auto;background:none;border:0;color:#c43a3a;cursor:pointer;font-size:11px;font-weight:600}
+.cardimg{width:100%;height:110px;object-fit:cover;border-radius:8px;margin-top:8px;border:1px solid var(--line);display:none}
+.imgstate{font-size:11px;color:var(--grey);margin-top:6px}
+.regen{background:none;border:0;color:var(--ink);text-decoration:underline;cursor:pointer;font-size:11px;font-weight:600}
+.addrow{display:flex;gap:8px;flex-wrap:wrap}
+.console{background:#0a0a0a;border-radius:16px;padding:20px;width:auto}
+.console h2{font-family:'Space Grotesk';font-size:16px;color:#fff;margin-bottom:12px}
+canvas{border-radius:22px;display:block;border:1px solid #26262c}
+.console .btn{background:#fff;color:var(--ink)}
+.console .btn.sec{background:transparent;color:#fff;border:1.5px solid #3a3a42}
+.console .note{font-size:11.5px;color:#8b8b95;margin-top:10px;max-width:320px}
+#dl{display:none;margin-top:12px;color:var(--green);font-weight:700;font-size:13.5px}
+.err{color:#c43a3a;font-size:12.5px;margin-top:10px;display:none}
+.stage{position:sticky;top:80px}
+.note{font-size:12px;color:var(--grey)}
+</style></head><body>
+<div class="nav">
+  <a class="logo" href="/demoworld"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"><b>Demo-World · Video Maker</b></a>
+  <div class="sp"></div>
+  <a class="nlink" href="/demoworld">← All demos</a>
+</div>
+<div class="hero">
+  <div class="eyebrow"><span class="dot"></span>Internal tool · AI script + AI images</div>
+  <h1 class="big">Make a client's <em>RCS demo video</em> in minutes</h1>
+  <p>Describe the demo, upload the brand icon - the AI writes the conversation (welcome, rich cards with buttons, OTP, compliant STOP flow) and generates the card imagery. Review, then render a phone-styled video in your browser.</p>
+</div>
+<div class="wrap">
+  <div>
+    <div class="panel">
+      <h2>1 · Brand</h2>
+      <label>Brand / agent name</label><input type="text" id="brand" placeholder="e.g. Como">
+      <label>Brand color &nbsp; <input type="color" id="color" value="#0AB9E3"></label>
+      <label>Agent icon - the only thing you upload <span class="iconprev" id="iconprev"><span style="font-size:9px;color:#aaa">none</span></span></label>
+      <input type="file" id="icon" accept="image/*" style="font-size:12px">
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <h2>2 · What do you need?</h2>
+      <textarea id="brief" placeholder="e.g. Loyalty demo for a coffee chain: welcome, a 2-for-1 latte offer card with an Order button, a double-points day card, an order confirmation, an OTP, then the customer sends STOP and gets the opt-out confirmation."></textarea>
+      <button class="btn" id="gen">Generate script &amp; images with AI</button>
+      <div class="err" id="err"></div>
+    </div>
+    <div class="panel" style="margin-top:18px">
+      <h2>3 · Script <span>- edit anything, images regenerate on demand</span></h2>
+      <div id="script"><div class="note">Generate a script above, or add messages manually.</div></div>
+      <div class="addrow">
+        <button class="btn sec" onclick="addMsg('in')">+ Text</button>
+        <button class="btn sec" onclick="addMsg('card')">+ Rich card</button>
+        <button class="btn sec" onclick="addMsg('out')">+ Customer reply</button>
+      </div>
+    </div>
+  </div>
+  <div class="stage">
+    <div class="console">
+      <h2>Preview &amp; render</h2>
+      <canvas id="cv" width="420" height="892" style="width:300px"></canvas>
+      <div style="display:flex;gap:8px">
+        <button class="btn sec" id="prev">▶ Preview</button>
+        <button class="btn" id="rec">⏺ Render &amp; download</button>
+      </div>
+      <a id="dl">⬇ Download video</a>
+      <div class="note">Renders a WebM video - plays in browsers, WhatsApp and slides. Use desktop Chrome for best results. Nothing is uploaded; the video is built on your machine.</div>
+    </div>
+  </div>
+</div>
+<script>
+/* ---------- state ---------- */
+let SPEC = { agentName:'', messages:[] };
+let iconImg = null;
+const $ = s => document.querySelector(s);
+
+$('#icon').onchange=function(){const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{iconImg=im;$('#iconprev').innerHTML='';const t=document.createElement('img');t.src=e.target.result;$('#iconprev').appendChild(t);};im.src=e.target.result;};r.readAsDataURL(this.files[0]);};
+
+/* ---------- AI generate: script then images ---------- */
+$('#gen').onclick=async()=>{
+  const brand=$('#brand').value.trim(), brief=$('#brief').value.trim();
+  const err=$('#err');err.style.display='none';
+  if(!brand||!brief){err.textContent='Enter the brand name and the brief first.';err.style.display='block';return;}
+  const g=$('#gen');g.disabled=true;g.textContent='Writing the script...';
+  try{
+    const r=await fetch('/dw/api/videospec',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({brand,brief})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'generation failed');
+    SPEC=d.spec;renderScript();
+    await genAllImages(g);
+  }catch(e){err.textContent=e.message;err.style.display='block';}
+  g.disabled=false;g.textContent='Generate script & images with AI';
+};
+async function genAllImages(btn){
+  const cards=SPEC.messages.map((m,i)=>({m,i})).filter(x=>x.m.k==='card'&&x.m.imgPrompt&&!x.m.imgObj);
+  let n=0;
+  for(const c of cards){
+    n++;if(btn)btn.textContent=`Generating image ${n}/${cards.length}...`;
+    await genImage(c.i);
+  }
+}
+async function genImage(i){
+  const m=SPEC.messages[i];if(!m||!m.imgPrompt)return;
+  m.imgState='generating';renderScript();
+  try{
+    const r=await fetch('/dw/api/genimage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:m.imgPrompt})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'image failed');
+    await new Promise(res=>{const im=new Image();im.onload=()=>{m.imgObj=im;res();};im.onerror=res;im.src=d.dataUrl;});
+    m.imgState='done';m.imgUrl=d.dataUrl;
+  }catch(e){m.imgState='error: '+e.message;}
+  renderScript();
+}
+
+/* ---------- script editor ---------- */
+function addMsg(k){
+  SPEC.messages.push(k==='card'?{k,ct:'Card title',t:'Card description. Reply STOP to opt-out.',btns:['Button'],imgPrompt:'professional product photograph'}:{k,t:k==='out'?'STOP':'Message text'});
+  renderScript();
+}
+function renderScript(){
+  const el=$('#script');el.innerHTML='';
+  SPEC.messages.forEach((m,i)=>{
+    const d=document.createElement('div');d.className='msg';
+    let inner=`<div class="row"><span class="k ${m.k==='out'?'cust':''}">${m.k==='in'?'Agent text':m.k==='card'?'Rich card':'Customer'}</span><button class="del" onclick="SPEC.messages.splice(${i},1);renderScript()">remove</button></div>`;
+    if(m.k==='card'){
+      inner+=`<input value="${esc(m.ct||'')}" placeholder="Card title" onchange="SPEC.messages[${i}].ct=this.value">`;
+      inner+=`<textarea onchange="SPEC.messages[${i}].t=this.value">${esc(m.t||'')}</textarea>`;
+      inner+=`<input value="${esc((m.btns||[]).join(' | '))}" placeholder="Buttons separated by |" onchange="SPEC.messages[${i}].btns=this.value.split('|').map(s=>s.trim()).filter(Boolean)">`;
+      inner+=`<input value="${esc(m.imgPrompt||'')}" placeholder="Image prompt (AI-generated picture)" onchange="SPEC.messages[${i}].imgPrompt=this.value;SPEC.messages[${i}].imgObj=null">`;
+      if(m.imgUrl)inner+=`<img class="cardimg" src="${m.imgUrl}" style="display:block">`;
+      inner+=`<div class="imgstate">${m.imgState==='generating'?'🎨 generating image...':m.imgState&&m.imgState.startsWith('error')?('⚠ '+esc(m.imgState)):(m.imgObj?'image ready · ':'no image yet · ')}${m.imgState!=='generating'?`<button class="regen" onclick="genImage(${i})">${m.imgObj?'regenerate':'generate image'}</button>`:''}</div>`;
+    } else {
+      inner+=`<textarea onchange="SPEC.messages[${i}].t=this.value">${esc(m.t||'')}</textarea>`;
+      if(m.k==='in')inner+=`<input value="${esc((m.chips||[]).join(' | '))}" placeholder="Suggested reply chips separated by | (optional)" onchange="SPEC.messages[${i}].chips=this.value.split('|').map(s=>s.trim()).filter(Boolean)">`;
+    }
+    d.innerHTML=inner;el.appendChild(d);
+  });
+  if(!SPEC.messages.length)el.innerHTML='<div class="note">Generate a script above, or add messages manually.</div>';
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+
+/* ---------- canvas renderer (dark Google Messages) ---------- */
+const cv=$('#cv'),ctx=cv.getContext('2d');
+const W=420,H=892,PAD=14,MAXW=Math.floor(W*0.78);
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function wrap(text,font,maxw){ctx.font=font;const words=String(text).split(/\s+/),lines=[];let cur='';
+  for(const w of words){const t=cur?cur+' '+w:w;if(ctx.measureText(t).width>maxw&&cur){lines.push(cur);cur=w;}else cur=t;}
+  if(cur)lines.push(cur);return lines;}
+const F={msg:'15px "Segoe UI"',title:'600 15.5px "Segoe UI"',small:'12px "Segoe UI"',btn:'600 14.5px "Segoe UI"',hdr:'500 19px "Segoe UI"',chip:'14px "Segoe UI"'};
+function measure(m){
+  if(m.k==='disc'){return wrap('This is an RCS for Business chat. This business can see your number when you message them.',F.small,W-100).length*17+46;}
+  if(m.k==='card'){
+    let h=m.imgObj?150:0;
+    h+=10+22;
+    h+=wrap(m.t,'13.5px "Segoe UI"',MAXW+20-28).length*19+6;
+    h+=(m.btns&&m.btns.length?m.btns.length*42+9:8);
+    return h+8;
+  }
+  const lines=wrap(m.t,F.msg,MAXW-28);
+  let h=lines.length*21+20+6;
+  if(m.chipsShown)h+=44;
+  if(m.metaShown)h+=20;
+  return h;
+}
+function drawMsg(m,y){
+  if(m.k==='disc'){
+    ctx.fillStyle='#8D95A6';ctx.font=F.small;ctx.textAlign='center';
+    ctx.fillText('RCS chat with '+(SPEC.agentName||$('#brand').value||'Agent')+' · Today 17:31',W/2,y+16);
+    const ls=wrap('This is an RCS for Business chat. This business can see your number when you message them.',F.small,W-100);
+    ls.forEach((l,i)=>ctx.fillText(l,W/2,y+40+i*17));ctx.textAlign='left';return;
+  }
+  if(m.k==='card'){
+    const cw=MAXW+20,x=PAD;let cy=y;
+    const imh=m.imgObj?150:0;
+    const dl=wrap(m.t,'13.5px "Segoe UI"',cw-28);
+    const bh=(m.btns&&m.btns.length?m.btns.length*42+9:8);
+    const ch=imh+10+22+dl.length*19+6+bh;
+    ctx.fillStyle='#1D2637';rr(x,cy,cw,ch,20);ctx.fill();
+    if(imh){ctx.save();rr(x,cy,cw,ch,20);ctx.clip();
+      const im=m.imgObj;const s=Math.max(cw/im.width,imh/im.height);
+      ctx.drawImage(im,x+(cw-im.width*s)/2,cy+(imh-im.height*s)/2,im.width*s,im.height*s);
+      ctx.restore();}
+    let ty=cy+imh+10;
+    ctx.fillStyle='#fff';ctx.font=F.title;ctx.fillText(m.ct||'',x+14,ty+15);ty+=22;
+    ctx.fillStyle='#C7CDDB';ctx.font='13.5px "Segoe UI"';
+    dl.forEach(l=>{ctx.fillText(l,x+14,ty+14);ty+=19;});ty+=6;
+    if(m.btns)m.btns.forEach(b=>{
+      ctx.strokeStyle='#2A3448';ctx.beginPath();ctx.moveTo(x+8,ty);ctx.lineTo(x+cw-8,ty);ctx.stroke();
+      ctx.fillStyle='#8AB4F8';ctx.font=F.btn;ctx.textAlign='center';ctx.fillText(b,x+cw/2,ty+27);ctx.textAlign='left';ty+=42;});
+    return;
+  }
+  const lines=wrap(m.t,F.msg,MAXW-28);
+  const bw=Math.min(MAXW,Math.max(...lines.map(l=>{ctx.font=F.msg;return ctx.measureText(l).width}))+28);
+  const bh2=lines.length*21+20;
+  const x=m.k==='out'?W-PAD-bw:PAD;
+  ctx.fillStyle=m.k==='out'?'#3B6EF6':'#1D2637';rr(x,y,bw,bh2,20);ctx.fill();
+  ctx.fillStyle=m.k==='out'?'#fff':'#E7EAF3';ctx.font=F.msg;
+  lines.forEach((l,i)=>ctx.fillText(l,x+14,y+25+i*21));
+  let yy=y+bh2;
+  if(m.metaShown){ctx.fillStyle='#8D95A6';ctx.font='11px "Segoe UI"';
+    if(m.k==='out'){ctx.textAlign='right';ctx.fillText('Delivered',W-PAD-6,yy+14);ctx.textAlign='left';}
+    else ctx.fillText((SPEC.agentName||'Agent')+' · now',PAD+6,yy+14);}
+  if(m.chipsShown&&m.chips){let cx=PAD;const ch=36;yy+=(m.metaShown?20:4);
+    m.chips.forEach(c=>{ctx.font=F.chip;const w=ctx.measureText(c).width+32;
+      ctx.strokeStyle='#3A4358';rr(cx,yy,w,ch,18);ctx.stroke();
+      ctx.fillStyle='#9FB4FF';ctx.fillText(c,cx+16,yy+23);cx+=w+8;});}
+}
+function drawFrame(upto,typing,dot){
+  ctx.fillStyle='#0B1220';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#E7EAF3';ctx.font='600 14px "Segoe UI"';ctx.fillText('17:32',22,26);
+  ctx.textAlign='right';ctx.font='12px "Segoe UI"';ctx.fillText('📶 WiFi 63',W-22,26);ctx.textAlign='left';
+  ctx.fillStyle='#E7EAF3';ctx.font='20px "Segoe UI"';ctx.fillText('←',18,66);
+  ctx.save();ctx.beginPath();ctx.arc(76,60,21,0,7);ctx.clip();ctx.fillStyle='#fff';ctx.fillRect(55,39,42,42);
+  if(iconImg){const s=Math.min(30/iconImg.width,30/iconImg.height);ctx.drawImage(iconImg,76-iconImg.width*s/2,60-iconImg.height*s/2,iconImg.width*s,iconImg.height*s);}
+  else{ctx.fillStyle=$('#color').value;ctx.font='800 20px "Segoe UI"';ctx.textAlign='center';ctx.fillText(($('#brand').value||'A')[0].toUpperCase(),76,67);ctx.textAlign='left';}
+  ctx.restore();
+  const nm=SPEC.agentName||$('#brand').value||'Agent';
+  ctx.fillStyle='#E7EAF3';ctx.font=F.hdr;ctx.fillText(nm,108,67);
+  const nw=ctx.measureText(nm).width;
+  ctx.fillStyle='#8AB4F8';ctx.beginPath();ctx.arc(108+nw+15,61,8,0,7);ctx.fill();
+  ctx.strokeStyle='#0B1220';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(108+nw+11,61);ctx.lineTo(108+nw+14,64);ctx.lineTo(108+nw+19,58);ctx.stroke();ctx.lineWidth=1;
+  ctx.fillStyle='#B9C0CF';ctx.font='18px "Segoe UI"';ctx.fillText('⋮',W-26,66);
+  ctx.fillStyle='#1D2637';rr(PAD,H-64,W-2*PAD-58,44,22);ctx.fill();
+  ctx.fillStyle='#8D95A6';ctx.font='15px "Segoe UI"';ctx.fillText('RCS message',PAD+18,H-37);
+  ctx.fillStyle='#7C4DE0';ctx.beginPath();ctx.arc(W-PAD-23,H-42,23,0,7);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='16px "Segoe UI"';ctx.textAlign='center';ctx.fillText('🎤',W-PAD-23,H-36);ctx.textAlign='left';
+  const items=[{k:'disc'}].concat(SPEC.messages.slice(0,upto)).map((m,idx,arr)=>{
+    const c={...m};c.metaShown=(idx===arr.length-1)&&!typing&&m.k!=='disc';c.chipsShown=c.metaShown&&m.chips&&m.chips.length;return c;});
+  const total=items.reduce((s,m)=>s+measure(m)+6,0)+(typing?54:0);
+  ctx.save();ctx.beginPath();ctx.rect(0,92,W,H-92-70);ctx.clip();
+  let yy=H-78-total;
+  for(const m of items){drawMsg(m,yy);yy+=measure(m)+6;}
+  if(typing){ctx.fillStyle='#1D2637';rr(PAD,yy,74,44,20);ctx.fill();
+    for(let i=0;i<3;i++){ctx.fillStyle='#7C86A0';ctx.globalAlpha=(dot===i)?1:.4;ctx.beginPath();ctx.arc(PAD+22+i*15,yy+22,4.5,0,7);ctx.fill();ctx.globalAlpha=1;}}
+  ctx.restore();
+}
+function buildTL(){
+  const tl=[];
+  SPEC.messages.forEach((m,i)=>{
+    if(m.k!=='out')tl.push({upto:i,typing:true,dur:1100});
+    const holdBase=m.k==='card'?2600:1600;
+    tl.push({upto:i+1,typing:false,dur:holdBase+Math.min(2600,(m.t||'').length*22)});
+  });
+  if(tl.length)tl[tl.length-1].dur+=2600;
+  tl.unshift({upto:0,typing:false,dur:1300});
+  return tl;
+}
+let playing=false;
+function play(record){
+  if(playing||!SPEC.messages.length)return;playing=true;
+  const tl=buildTL();const t0=performance.now();
+  let rec=null,chunks=[];
+  if(record){
+    const stream=cv.captureStream(30);
+    const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm';
+    rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4000000});
+    rec.ondataavailable=e=>chunks.push(e.data);
+    rec.onstop=()=>{const blob=new Blob(chunks,{type:'video/webm'});const url=URL.createObjectURL(blob);
+      const a=$('#dl');a.href=url;a.download=(($('#brand').value||'brand').replace(/\W+/g,'-'))+'-rcs-demo.webm';a.style.display='inline-block';a.click();};
+    rec.start();
+  }
+  function frame(now){
+    let t=now-t0,acc=0,cur=tl[tl.length-1];
+    for(const st of tl){if(t<acc+st.dur){cur=st;break;}acc+=st.dur;}
+    const done=t>tl.reduce((s,x)=>s+x.dur,0);
+    drawFrame(cur.upto,cur.typing,Math.floor(now/280)%3);
+    if(!done)requestAnimationFrame(frame);
+    else{playing=false;if(rec)setTimeout(()=>rec.stop(),200);}
+  }
+  requestAnimationFrame(frame);
+}
+$('#prev').onclick=()=>play(false);
+$('#rec').onclick=()=>play(true);
+drawFrame(0,false,0);
+</script>
+</body></html>

@@ -1,0 +1,7 @@
+node_modules/
+*.key
+.env
+vcr.yml
+*.log
+*.zip
+.DS_Store

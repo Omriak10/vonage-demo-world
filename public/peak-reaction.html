@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tap the V</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--muted:#6b6b76;--line:#e8e8ee}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;user-select:none}
+.vlogo{display:block;padding:16px 20px 0}.vlogo img{height:22px;width:auto;display:block}
+.wrap{max-width:480px;margin:0 auto;padding:16px 16px 30px;text-align:center}
+.eyebrow{font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 24px/1.1 'Space Grotesk',sans-serif;margin:6px 0 4px}p.l{color:var(--muted);margin:0 0 14px;font-size:14px}
+.hud{display:flex;gap:8px;margin-bottom:12px}.hud div{flex:1;border:1px solid var(--line);border-radius:12px;padding:8px 10px}.hud b{display:block;font:700 20px 'Space Grotesk',sans-serif}.hud span{font-size:11px;color:var(--muted)}
+.arena{position:relative;height:340px;border:2px solid var(--ink);border-radius:18px;overflow:hidden;background:#fff}
+.v{position:absolute;width:74px;height:74px;border-radius:50%;border:2px solid var(--ink);background:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .12s}.v svg{width:36px;height:32px;fill:var(--ink)}.v.hot{background:var(--ink)}.v.hot svg{fill:#fff}.v:active{transform:scale(.92)}
+.msg{position:absolute;inset:0;display:grid;place-items:center;font:600 16px Inter;color:var(--muted);padding:20px}
+.btn{margin-top:14px;border:1.5px solid var(--ink);background:var(--ink);color:#fff;border-radius:999px;padding:10px 18px;font:600 13.5px Inter;cursor:pointer}
+</style></head><body>
+<a class="vlogo" href="https://www.vonage.com" target="_blank" rel="noopener"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg" alt="Vonage"></a>
+<div class="wrap"><div class="eyebrow">The RCS game</div><h1>Tap the V</h1><p class="l">Tap the V only when it turns black. Ten rounds. Fastest average wins.</p>
+<div class="hud"><div><b id="r">0/10</b><span>rounds</span></div><div><b id="last">-</b><span>last</span></div><div><b id="avg">-</b><span>average</span></div></div>
+<div class="arena" id="a"><div class="msg" id="m">Tap to start</div></div>
+<button class="btn" id="again" style="display:none" onclick="location.reload()">Play again</button>
+<script>
+const q=new URLSearchParams(location.search);const TO=q.get('to')||'',CH=q.get('ch')||'rcs';
+const V='<svg viewBox="0 0 34 30"><path d="M13.031 14.745L6.656.6H0l9.547 21.486c.042.093.174.093.214 0l3.27-7.34zM26.933.6s-8.635 19.478-9.715 21.862c-2.582 5.697-4.495 7.123-6.444 7.428a.037.037 0 00-.032.037c0 .02.016.038.037.038h6.097c2.683 0 4.519-1.805 7.105-7.503C24.885 20.472 33.706.6 33.706.6h-6.773z"/></svg>';
+const a=document.getElementById('a'),m=document.getElementById('m');let round=0,times=[],hotAt=0,el=null,timer=null,started=false;
+function place(){if(el)el.remove();el=document.createElement('div');el.className='v';el.innerHTML=V;const W=a.clientWidth-80,H=a.clientHeight-80;el.style.left=(10+Math.random()*(W-20))+'px';el.style.top=(10+Math.random()*(H-20))+'px';a.appendChild(el);
+ el.onpointerdown=(e)=>{e.stopPropagation();if(!hotAt){m.textContent='Too early! Wait for black.';m.style.display='grid';setTimeout(()=>{m.style.display='none'},700);return;}const t=Date.now()-hotAt;hotAt=0;times.push(t);round++;document.getElementById('r').textContent=round+'/10';document.getElementById('last').textContent=t+'ms';document.getElementById('avg').textContent=Math.round(times.reduce((x,y)=>x+y,0)/times.length)+'ms';round<10?next():finish()};
+ timer=setTimeout(()=>{el.classList.add('hot');hotAt=Date.now()},800+Math.random()*2200)}
+function next(){clearTimeout(timer);hotAt=0;place()}
+a.onpointerdown=()=>{if(started)return;started=true;m.style.display='none';next()};
+function finish(){el&&el.remove();const avg=Math.round(times.reduce((x,y)=>x+y,0)/times.length),best=Math.min(...times);m.textContent='Average '+avg+'ms, best '+best+'ms. Sent to your chat.';m.style.display='grid';document.getElementById('again').style.display='inline-block';
+ if(TO)fetch('/dw/peak/reaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:TO,ch:CH,avg,best})}).catch(()=>{})}
+</script></div></body></html>

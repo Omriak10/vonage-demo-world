@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Find out more</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--muted:#6b6b76;--line:#dcdce4;--violet:#0d0d0d}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:520px;margin:0 auto;padding:22px 20px 40px}
+.eyebrow{font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
+h1{font:700 26px/1.1 'Space Grotesk',sans-serif;margin:8px 0 6px}p.l{color:var(--muted);margin:0 0 18px;font-size:14px}
+label{display:block;font:600 12.5px Inter;margin:12px 0 5px}
+input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;color:var(--ink);background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--violet)}textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;margin-top:18px;border:0;background:var(--ink);color:#fff;border-radius:999px;padding:13px;font:600 15px Inter;cursor:pointer}.btn:disabled{opacity:.5}
+.ok{display:none;text-align:center;padding:30px 10px}.ok b{font:700 22px 'Space Grotesk',sans-serif;display:block}.ok p{color:var(--muted)}
+.err{color:#c0392b;font-size:13px;margin-top:8px;min-height:18px}
+.vlogo{display:block;padding:16px 20px 0}.vlogo img{height:22px;width:auto;display:block}</style></head><body><a class="vlogo" href="https://www.vonage.com" target="_blank" rel="noopener"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg" alt="Vonage"></a><div class="wrap">
+<div id="f"><div class="eyebrow">Find out more</div><h1>Tell us what you would like to build</h1><p class="l">Takes 30 seconds. We reply in this chat and by email within one working day.</p>
+<div class="row"><div><label>Your name</label><input id="name" placeholder="Name" autocomplete="name"></div><div><label>Company</label><input id="company" placeholder="Company" autocomplete="organization"></div></div>
+<label>Work email</label><input id="email" type="email" placeholder="you@company.com" autocomplete="email">
+<label>What are you most interested in?</label><select id="interest"><option>RCS for marketing and promotions</option><option>RCS for notifications and customer care</option><option>Verification and fraud prevention</option><option>WhatsApp Business</option><option>Voice and video</option><option>Migrating from SMS</option><option>Something else</option></select>
+<label>Anything specific? <span style="color:var(--muted);font-weight:400">(optional)</span></label><textarea id="message" placeholder="Volumes, markets, timelines, the flow you have in mind..."></textarea>
+<div class="err" id="err"></div><button class="btn" id="go">Send enquiry</button></div>
+<div class="ok" id="ok"><b>Thanks, we have it</b><p>Check the chat, your confirmation is already there. Close this window to keep exploring.</p></div>
+<script>
+const q=new URLSearchParams(location.search);
+document.getElementById('go').onclick=async()=>{
+  const b={to:q.get('to')||'',ch:q.get('ch')||'rcs',brand:q.get('brand')||'',name:v('name'),company:v('company'),email:v('email'),interest:v('interest'),message:v('message')};
+  const e=document.getElementById('err');e.textContent='';
+  if(!b.name)return e.textContent='Please add your name.';if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(b.email))return e.textContent='Please add a valid work email.';
+  const btn=document.getElementById('go');btn.disabled=true;
+  try{const r=await fetch('/dw/peak/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});if(!r.ok)throw new Error('HTTP '+r.status);document.getElementById('f').style.display='none';document.getElementById('ok').style.display='block';}
+  catch(x){e.textContent='Could not send right now, please try again.';btn.disabled=false;}
+};
+function v(id){return document.getElementById(id).value.trim()}
+</script></div></body></html>

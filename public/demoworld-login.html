@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in · Vonage Demo-World</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,system-ui,sans-serif;background:#fff;color:#0a0a0a;min-height:100vh;display:flex;flex-direction:column}
+.nav{display:flex;align-items:center;gap:10px;padding:16px 26px;border-bottom:1px solid #ececf0}
+.nav img{height:22px}
+.nav b{font-family:'Space Grotesk';font-size:15px}
+.wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 18px}
+.card{width:100%;max-width:420px}
+h1{font-family:'Space Grotesk';font-size:30px;letter-spacing:-.02em;margin-bottom:6px}
+.sub{color:#6f6b7a;font-size:14px;margin-bottom:22px}
+.tabs{display:flex;gap:6px;background:#f1f1f4;padding:5px;border-radius:12px;margin-bottom:18px}
+.tabs button{flex:1;border:none;background:none;padding:10px;border-radius:8px;font-weight:700;font-size:13.5px;cursor:pointer;color:#6b6774;font-family:inherit}
+.tabs button.on{background:#fff;color:#0a0a0a;box-shadow:0 1px 3px #0001}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:12px;font-weight:700;color:#55515e;margin-bottom:6px;letter-spacing:.02em}
+.f input{width:100%;border:1.5px solid #e2e2e8;border-radius:12px;padding:13px 14px;font-size:14.5px;font-family:inherit;outline:none}
+.f input:focus{border-color:#0a0a0a}
+.go{width:100%;border:none;border-radius:100px;background:#0a0a0a;color:#fff;font-family:inherit;font-weight:800;font-size:15px;padding:15px;cursor:pointer;margin-top:6px}
+.go:disabled{opacity:.5}
+.msg{margin-top:14px;font-size:13.5px;border-radius:12px;padding:12px 14px;display:none}
+.msg.err{display:block;background:#fdecec;color:#b3261e}
+.msg.ok{display:block;background:#e8f7ee;color:#116b3d}
+.note{margin-top:18px;font-size:12px;color:#8b8698;text-align:center}
+.foot{color:#8b8698;text-align:center;padding:18px;font-size:12px;border-top:1px solid #ececf0}
+#reg,#forgot,#reset{display:none}
+.link{background:none;border:none;color:#55515e;font:600 12.5px Inter,system-ui,sans-serif;cursor:pointer;text-decoration:underline;padding:0;margin-top:12px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+</style></head><body>
+<div class="nav"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6" alt="Vonage"><b>Demo-World</b></div>
+<div class="wrap"><div class="card">
+  <h1>Welcome to Demo-World.</h1>
+  <div class="sub">Sign in with your Vonage account to run the live demos.</div>
+  <div class="tabs"><button id="tl" class="on" onclick="tab('login')">Sign in</button><button id="tr" onclick="tab('reg')">Register</button></div>
+  <div id="login">
+    <div class="f"><label>Email</label><input id="lemail" type="email" placeholder="you@vonage.com" autocomplete="username"></div>
+    <div class="f"><label>Password</label><input id="lpass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="go" id="lgo" onclick="doLogin()">Sign in</button>
+    <div class="row"><button class="link" onclick="tab('forgot')">Forgot password?</button><button class="link" id="resendBtn" style="display:none" onclick="doResend()">Resend verification email</button></div>
+  </div>
+  <div id="forgot">
+    <div class="f"><label>Vonage email</label><input id="femail" type="email" placeholder="you@vonage.com" autocomplete="username" onkeydown="if(event.key==='Enter')doForgot()"></div>
+    <button class="go" id="fgo" onclick="doForgot()">Email me a reset link</button>
+    <button class="link" onclick="tab('login')">Back to sign in</button>
+  </div>
+  <div id="reset">
+    <div class="f"><label>New password</label><input id="npass" type="password" placeholder="min. 6 characters" autocomplete="new-password"></div>
+    <div class="f"><label>Repeat new password</label><input id="npass2" type="password" placeholder="repeat it" autocomplete="new-password" onkeydown="if(event.key==='Enter')doReset()"></div>
+    <button class="go" id="ngo" onclick="doReset()">Set new password</button>
+  </div>
+  <div id="reg">
+    <div class="f"><label>Full name</label><input id="rname" placeholder="Jane Smith"></div>
+    <div class="f"><label>Role</label><input id="rrole" placeholder="e.g. Solutions Engineer"></div>
+    <div class="f"><label>Vonage email</label><input id="remail" type="email" placeholder="you@vonage.com"></div>
+    <div class="f"><label>Password</label><input id="rpass" type="password" placeholder="min. 6 characters" onkeydown="if(event.key==='Enter')doReg()"></div>
+    <button class="go" id="rgo" onclick="doReg()">Create account</button>
+  </div>
+  <div class="msg" id="msg"></div>
+  <div class="note">Registration is limited to <b>@vonage.com</b> addresses. You'll get a verification email before your first sign-in - check your junk folder if it does not arrive within a minute.</div>
+</div></div>
+<div class="foot">Vonage Demo-World · internal field-team tool</div>
+<script>
+function tab(t){['login','reg','forgot','reset'].forEach(k=>document.getElementById(k).style.display=k===t?'block':'none');
+ document.getElementById('tl').classList.toggle('on',t==='login'||t==='forgot');
+ document.getElementById('tr').classList.toggle('on',t==='reg');
+ msg('','');}
+function msg(t,k){const m=document.getElementById('msg');m.className='msg'+(k?' '+k:'');m.textContent=t;}
+async function api(p,b){const r=await fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});return r.json().catch(()=>({error:'bad response'}));}
+async function doLogin(){
+ const b=document.getElementById('lgo');b.disabled=true;b.textContent='Signing in…';
+ const r=await api('/dw/api/login',{email:document.getElementById('lemail').value,password:document.getElementById('lpass').value});
+ b.disabled=false;b.textContent='Sign in';
+ if(r.ok){msg('Welcome back, '+r.name+'!','ok');setTimeout(()=>location.href='/demoworld',400);return;}
+ msg(r.error||'Sign-in failed','err');
+ document.getElementById('resendBtn').style.display=/verify your email/i.test(r.error||'')?'inline':'none';
+}
+async function doResend(){
+ const r=await api('/dw/api/resend-verification',{email:document.getElementById('lemail').value});
+ msg(r.error||r.message,r.error?'err':'ok');
+}
+async function doForgot(){
+ const b=document.getElementById('fgo');b.disabled=true;b.textContent='Sending…';
+ const r=await api('/dw/api/forgot',{email:document.getElementById('femail').value});
+ b.disabled=false;b.textContent='Email me a reset link';
+ msg(r.error||r.message,r.error?'err':'ok');
+}
+async function doReset(){
+ const p1=document.getElementById('npass').value,p2=document.getElementById('npass2').value;
+ if(p1!==p2)return msg('The two passwords do not match','err');
+ const b=document.getElementById('ngo');b.disabled=true;b.textContent='Saving…';
+ const r=await api('/dw/api/reset',{token:RESET,password:p1});
+ b.disabled=false;b.textContent='Set new password';
+ if(r.ok){msg('Password updated - sign in with it now.','ok');history.replaceState(null,'','/demoworld');tab('login');document.getElementById('msg').className='msg ok';document.getElementById('msg').textContent='Password updated - sign in with it now.';return;}
+ msg(r.error||'Reset failed','err');
+}
+const RESET=new URLSearchParams(location.search).get('reset')||'';
+if(RESET){tab('reset');msg('Choose a new password for your account.','ok');}
+async function doReg(){
+ const b=document.getElementById('rgo');b.disabled=true;b.textContent='Creating…';
+ const r=await api('/dw/api/register',{name:document.getElementById('rname').value,role:document.getElementById('rrole').value,email:document.getElementById('remail').value,password:document.getElementById('rpass').value});
+ b.disabled=false;b.textContent='Create account';
+ if(r.ok&&r.mailSent){msg('Almost there - check your inbox and tap the verification link, then sign in here.','ok');return;}
+ if(r.ok){msg(r.error||'Account created - verification email pending.','err');return;}
+ msg(r.error||'Registration failed','err');
+}
+if(new URLSearchParams(location.search).get('verified')==='1'){msg('Email verified! Sign in below.','ok');}
+</script>
+</body></html>

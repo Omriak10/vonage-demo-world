@@ -1,0 +1,1503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vonage Demo-World</title>
+<link rel="icon" href="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{--violet:#0a0a0a;--violet-d:#000;--lav:#f0f0f2;--ink:#0a0a0a;--ink2:#1a1a1a;--bg:#ffffff;--card:#fff;--line:#e8e8eb;--grey:#6e6e78;--coral:#fcac98;--pink:#fb8fd8;--green:#12b76a;--blue:#2b8bff}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.mono{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace}
+/* nav */
+.nav{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:22px;padding:15px 26px}
+.nav .logo{height:20px;display:flex;align-items:center;gap:11px}
+.nav .logo img{height:18px}
+.nav .logo b{color:var(--ink);font-weight:600;font-size:14px;letter-spacing:.01em;border-left:1px solid var(--line);padding-left:11px}
+.nav .sp{flex:1}
+.nav a.nlink{color:#4a4a52;font-weight:500;font-size:14px;padding:7px 4px;cursor:pointer;transition:color .15s}
+.nav a.nlink:hover,.nav a.nlink.on{color:var(--ink)}
+.nav .cta{background:var(--ink);color:#fff;padding:9px 17px;border-radius:100px;font-weight:600;font-size:13.5px;cursor:pointer;transition:transform .15s,opacity .15s}
+.nav .cta:hover{opacity:.85;transform:translateY(-1px)}
+/* hero */
+.hero{position:relative;background:#fff;color:var(--ink);overflow:hidden;padding:60px 26px 40px;text-align:center;border-bottom:1px solid var(--line)}
+.hero .grid-bg{display:none}
+.hero .in{position:relative;max-width:860px;margin:0 auto}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);color:#4a4a52;font-weight:600;font-size:12.5px;padding:6px 14px;border-radius:100px;letter-spacing:.02em}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #12b76a22}
+.vmark{height:74px;display:inline-block;margin-bottom:16px}
+h1.big{font-family:'Space Grotesk',sans-serif;font-size:clamp(38px,6.2vw,66px);line-height:1.03;font-weight:700;letter-spacing:-.025em;margin:22px 0 16px;color:var(--ink)}
+h1.big em{font-style:normal;color:var(--ink);box-shadow:inset 0 -0.32em 0 #12b76a33}
+.hero p.sub{color:var(--grey);font-size:clamp(15px,2vw,18px);max-width:600px;margin:0 auto 26px;line-height:1.55}
+.search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:100px;padding:6px 8px 6px 20px;max-width:560px;margin:0 auto;box-shadow:0 10px 30px rgba(10,10,20,.06)}
+.search:focus-within{border-color:var(--ink)}
+.search svg{width:19px;height:19px;fill:var(--grey);flex:none}
+.search input{flex:1;border:none;outline:none;font-size:15.5px;font-family:inherit;color:var(--ink);background:none}
+.search button{background:var(--ink);color:#fff;border:none;border-radius:100px;padding:11px 20px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit}
+.stats{display:flex;gap:40px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.stat b{display:block;font-family:'Space Grotesk';font-size:26px;color:var(--ink)}
+.stat span{color:var(--grey);font-size:12.5px;font-weight:500}
+/* category bar */
+.catbar{position:sticky;top:51px;z-index:30;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:13px 26px;display:flex;gap:9px;overflow-x:auto;align-items:center}
+.chip{flex:none;border:1px solid var(--line);background:#fff;color:#3a3a42;font-weight:600;font-size:13.5px;padding:8px 15px;border-radius:100px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s;white-space:nowrap}
+.chip:hover{border-color:var(--ink)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip .cdot{width:8px;height:8px;border-radius:50%}
+/* grid */
+.wrap{max-width:1200px;margin:0 auto;padding:30px 26px 80px}
+.secttl{display:flex;align-items:baseline;gap:12px;margin:6px 2px 18px}
+.secttl h2{font-family:'Space Grotesk';font-size:22px;font-weight:700;letter-spacing:-.01em}
+.secttl span{color:var(--grey);font-size:13.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column;position:relative}
+.demo:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(10,10,20,.10)}
+.demo .top{height:170px;position:relative;overflow:hidden;background:#f2f2f4}
+.demo .top img{width:100%;height:100%;object-fit:cover;display:block;transform-origin:center;animation:kb 24s ease-in-out infinite alternate;will-change:transform}
+.demo:hover .top img{animation-duration:8s}
+.demo:nth-child(2n) .top img{animation-delay:-5s}
+.demo:nth-child(3n) .top img{animation-duration:29s;animation-delay:-13s}
+.demo:nth-child(3n+1) .top img{animation-duration:21s;animation-delay:-9s}
+@keyframes kb{0%{transform:scale(1.04) translate(0,0)}100%{transform:scale(1.12) translate(-1.5%,-1.5%)}}
+@keyframes kbh{0%{transform:scale(1.06) translate(1%,-1%)}100%{transform:scale(1.18) translate(-2%,2%)}}
+/* motion is intentionally forced on (client request) - no prefers-reduced-motion opt-out */
+.demo .top::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.22),transparent 45%)}
+.demo .badge{position:absolute;top:12px;left:12px;z-index:3;background:rgba(255,255,255,.94);color:#1a1a1a;font-size:10.5px;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:.02em}
+.demo .mockflag{position:absolute;top:12px;right:12px;z-index:3;background:rgba(10,10,10,.78);color:#ffd27a;font-size:10px;font-weight:800;padding:4px 9px;border-radius:100px;letter-spacing:.05em}
+.demo .b{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}
+.demo .api{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--grey)}
+.demo h3{font-size:17px;font-weight:700;margin:6px 0 7px;letter-spacing:-.01em;color:var(--ink)}
+.demo .cust{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--grey);font-weight:600;margin-bottom:9px}
+.demo .cust::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--ink)}
+.demo .bl{font-size:13.5px;color:#55555e;flex:1;line-height:1.5}
+.demo .go{margin-top:14px;font-weight:700;font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:6px}
+.demo:hover .go{gap:9px}
+.empty{text-align:center;color:var(--grey);padding:60px;font-size:15px}
+/* detail overlay */
+.overlay{position:fixed;inset:0;z-index:60;background:var(--bg);overflow-y:auto;display:none;animation:fade .2s}
+.overlay.show{display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.dh{position:relative;color:#fff;padding:26px 26px 34px;overflow:hidden;background:#0a0a0a;min-height:236px;display:flex;align-items:flex-end}
+.dh .dhimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.95;z-index:0;transform-origin:center;animation:kbh 30s ease-in-out infinite alternate;will-change:transform}
+.dh::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.05) 0%,rgba(10,10,10,.28) 50%,rgba(10,10,10,.88) 100%);z-index:1}
+.dh h1,.dh .who,.dh .tag{text-shadow:0 1px 14px rgba(0,0,0,.6)}
+.dh .din{position:relative;max-width:1080px;margin:0 auto;z-index:2;width:100%}
+.back{display:inline-flex;align-items:center;gap:7px;background:#ffffff1f;border:1px solid #ffffff33;color:#fff;font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:100px;cursor:pointer;margin-bottom:20px}
+.back:hover{background:#ffffff30}
+.dh .tags,.sth .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.dh .tag,.sth .tag{background:#ffffff26;border:1px solid #ffffff33;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:100px;letter-spacing:.03em}
+.dh h1{font-family:'Space Grotesk';font-size:clamp(28px,4.4vw,44px);font-weight:700;letter-spacing:-.02em;max-width:760px;line-height:1.05}
+.dh .who{margin-top:12px;font-size:15px;color:#efe9fb;display:flex;align-items:center;gap:9px;font-weight:500}
+.dh .who b{background:#ffffff26;padding:3px 10px;border-radius:100px;font-weight:700}
+.dbody{max-width:1080px;margin:0 auto;padding:26px;display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+@media(max-width:860px){.dbody{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px 24px;animation:rise .3s}
+.panel h4{font-family:'Space Grotesk';font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel p{font-size:14.5px;color:#3a3742;margin-bottom:12px}
+.panel p:last-child{margin-bottom:0}
+.steps{counter-reset:s;list-style:none}
+.steps li{counter-increment:s;position:relative;padding:9px 0 9px 40px;font-size:14px;color:#3a3742;border-bottom:1px solid #f0eef5}
+.steps li:last-child{border:none}
+.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:26px;height:26px;background:var(--lav);color:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.runwrap{position:sticky;top:20px}
+.run{background:linear-gradient(180deg,#141018,#0d0d0d);color:#fff;border-radius:20px;padding:22px 22px 24px;border:1px solid #2a2340}
+.run h4{color:var(--lav);font-family:'Space Grotesk';font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.run .rsub{color:#a49fb0;font-size:13px;margin-bottom:16px}
+.field{display:flex;gap:8px;margin-bottom:12px}
+.field input{flex:1;background:#ffffff10;border:1px solid #ffffff26;border-radius:11px;color:#fff;padding:13px 15px;font-size:15px;font-family:inherit;outline:none}
+.field input:focus{border-color:#fff}
+.field input::placeholder{color:#8b8698}
+.rbtn{background:#fff;color:#0a0a0a;border:none;border-radius:11px;padding:13px 18px;font-weight:700;font-size:14.5px;cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s,transform .1s}
+.rbtn:hover{background:#e6e6e8}
+.rbtn:active{transform:scale(.98)}
+.rbtn.full{width:100%}
+.rbtn:disabled{opacity:.6;cursor:default}
+.rbtn.ghost{background:#ffffff14;border:1px solid #ffffff2b}
+.rout{margin-top:14px}
+.json{background:#0a0a0a;border:1px solid #2a2340;border-radius:12px;padding:15px;font-size:12.5px;line-height:1.65;overflow-x:auto;white-space:pre;color:#d6d3e0}
+.json .k{color:#cba1fa}.json .s{color:#86e090}.json .n{color:#fcac98}.json .b{color:#7cc4ff}
+.note{background:#ffffff0d;border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:11px 14px;font-size:13px;color:#cfccd9;margin-top:12px}
+.prereq{background:#ffca2814;border-left:3px solid #ffca28;border-radius:0 10px 10px 0;padding:11px 14px;font-size:13px;color:#e7e2d6;margin-bottom:14px;line-height:1.5}
+.prereq b{color:#ffca28}
+.steplist{list-style:none;counter-reset:s;margin:4px 0 0}
+.steplist li{counter-increment:s;position:relative;padding:7px 0 7px 30px;font-size:13px;color:#cfccd9;line-height:1.45}
+.steplist li::before{content:counter(s);position:absolute;left:0;top:6px;width:20px;height:20px;border-radius:50%;background:#ffffff14;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.qrbox{text-align:center;background:#fff;border-radius:16px;padding:18px;margin-top:6px}
+.qrbox img{width:190px;height:190px;border-radius:10px}
+/* --- resources --- */
+.reswrap{border-top:1px solid var(--line);background:#fafafb;padding:54px 26px 70px}
+.resin{max-width:1080px;margin:0 auto}
+.reshead{margin-bottom:26px}
+.reshead h2{font-family:'Space Grotesk';font-size:30px;font-weight:700;letter-spacing:-.02em}
+.reshead p{color:var(--grey);font-size:14.5px;margin-top:6px;max-width:680px}
+#resgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:18px;align-items:start}
+@media(max-width:560px){#resgrid{grid-template-columns:1fr}}
+.resgroup{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.rghead{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:6px}
+.rghead h3{font-family:'Space Grotesk';font-size:17px;font-weight:700}
+.rghead p{color:var(--grey);font-size:12.5px;margin-top:3px}
+.resrow{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid #f2f2f4}
+.resrow:last-child{border-bottom:none}
+.rtag{flex:none;font-size:9px;font-weight:800;letter-spacing:.06em;border-radius:5px;padding:4px 7px;background:#eef0f2;color:#55555e;min-width:66px;text-align:center;margin-top:2px}
+.rtag.APIREF{background:#0a0a0a;color:#fff}
+.rtag.DASHBOARD{background:#12b76a1f;color:#0e8a51}
+.rtag.DEMO{background:#871eff14;color:#6a1ad0}
+.rtag.TOOL{background:#ffca2833;color:#8a6d00}
+.rmain{flex:1;min-width:0}
+.rmain a.rt{font-weight:700;font-size:13.5px;color:var(--ink);text-decoration:none}
+.rmain a.rt:hover{text-decoration:underline}
+.rmain .rw{display:block;color:var(--grey);font-size:12px;margin-top:1px}
+.rmain a.ru{display:block;font-family:ui-monospace,Consolas,monospace;font-size:11px;color:#7a7a85;margin-top:4px;text-decoration:none;word-break:break-all;user-select:all}
+.rmain a.ru:hover{color:var(--ink)}
+/* --- animated simulator: device + journey rail --- */
+.simstage{display:flex;gap:20px;align-items:flex-start;margin:12px 0 4px}
+@media(max-width:520px){.simstage{flex-direction:column;align-items:center}}
+.dev{flex:none;width:174px;background:#000;border-radius:26px;padding:7px;box-shadow:0 16px 40px #000a,0 0 0 1px #ffffff14}
+.devscr{position:relative;border-radius:20px;overflow:hidden;height:320px;background:#101014;display:flex;flex-direction:column}
+.devnotch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:62px;height:14px;background:#000;border-radius:0 0 10px 10px;z-index:5}
+.devbar{display:flex;justify-content:space-between;align-items:center;padding:7px 12px 2px;font-size:8.5px;color:#ffffffcc;font-weight:700;letter-spacing:.03em}
+.devapp{flex:1;display:flex;flex-direction:column;padding:12px;color:#fff;position:relative;text-align:center}
+.devbrand{display:flex;align-items:center;gap:7px;font-weight:800;font-size:12px;letter-spacing:.02em;margin:6px 0 2px;justify-content:flex-start}
+.devlogo{width:26px;height:26px;border-radius:8px;background:#ffffff1f;display:flex;align-items:center;justify-content:center;font-size:13px;flex:none;font-weight:900}
+.devsub{font-size:9.5px;color:#ffffff99;margin-bottom:10px;text-align:left}
+.devamount{font-family:'Space Grotesk';font-size:24px;font-weight:700;margin:10px 0 2px}
+.devfield{background:#ffffff14;border-radius:8px;padding:7px 9px;font-size:10px;color:#fff;margin-bottom:6px;text-align:left}
+.devline{font-size:10px;color:#ffffffb0;margin-bottom:5px;text-align:left}
+.devplay{width:46px;height:46px;border-radius:50%;background:#ffffff22;display:flex;align-items:center;justify-content:center;font-size:17px;margin:12px auto}
+.devcta{margin-top:auto;width:100%;border:none;border-radius:10px;background:#fff;color:#0a0a0a;font-weight:800;font-size:11.5px;padding:10px;cursor:pointer;font-family:inherit}
+.devcta:hover{background:#e8e8eb}.devcta:disabled{opacity:.55;cursor:default}
+.devhome{width:64px;height:4px;border-radius:4px;background:#ffffff33;margin:6px auto 2px}
+.devbusy{position:absolute;inset:0;background:#000000a8;backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:4;animation:fade .25s}
+.devbusy .spin2{width:26px;height:26px;border:3px solid #ffffff2e;border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite}
+.devbusy .bmsg{font-size:9.5px;color:#ffffffd8;font-weight:600;text-align:center;padding:0 14px;line-height:1.5;min-height:28px}
+.devres{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;text-align:center;z-index:4;animation:fade .3s}
+.devres.okres{background:linear-gradient(180deg,#0c3a24,#0b0f0c)}
+.devres.badres{background:linear-gradient(180deg,#47131a,#100b0c)}
+.devres .big{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;animation:pop .45s cubic-bezier(.2,1.6,.5,1);color:#fff}
+.devres.okres .big{background:#12b76a}.devres.badres .big{background:#e5484d}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.devres .rt{font-weight:800;font-size:13px;color:#fff}
+.devres .rs{font-size:10px;color:#ffffffb8;line-height:1.5}
+.otp{display:flex;gap:5px;margin-top:6px}
+.otp i{width:18px;height:24px;border-radius:5px;background:#ffffff1f;border:1px solid #ffffff30;font-style:normal;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;animation:rise .3s both}
+.otp i:nth-child(2){animation-delay:.15s}.otp i:nth-child(3){animation-delay:.3s}.otp i:nth-child(4){animation-delay:.45s}
+.rail{flex:1;min-width:0}
+.hop{position:relative;display:flex;gap:11px;padding:0 0 20px;opacity:.4;transition:.35s}
+.hop.on,.hop.fail{opacity:1}
+.hop:last-child{padding-bottom:0}
+.hop::before{content:'';position:absolute;left:17px;top:38px;bottom:-2px;width:2px;background:#ffffff1c;transition:.35s}
+.hop:last-child::before{display:none}
+.hop.on::before{background:#12b76a66}
+.hop.fail::before{background:#e5484d66}
+.hopic{width:36px;height:36px;border-radius:50%;background:#1b1b1f;border:2px solid #ffffff26;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none;transition:.3s;color:#fff;font-weight:900;z-index:1}
+.hop.on .hopic{border-color:var(--green);background:#12b76a22;box-shadow:0 0 12px #12b76a3d}
+.hop.fail .hopic{border-color:#e5484d;background:#e5484d22;box-shadow:0 0 12px #e5484d44}
+.hopbody{flex:1;min-width:0;padding-top:2px}
+.hoptop{display:flex;align-items:baseline;gap:8px}
+.hopname{font-weight:800;font-size:13px;color:#fff}
+.hopsub{font-size:10px;color:#8a8a93;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.hopms{margin-left:auto;font-size:10px;color:#7ee2ae;font-weight:800;background:#12b76a1c;border-radius:100px;padding:2px 8px;opacity:0;transition:.3s;flex:none}
+.hop.on .hopms{opacity:1}
+.hop.fail .hopms{opacity:1;color:#ff9b9b;background:#e5484d22}
+.hopdet{font-size:11.5px;color:#b9b9c2;margin-top:3px;max-height:0;overflow:hidden;transition:max-height .4s}
+.hop.on .hopdet,.hop.fail .hopdet{max-height:44px}
+.simbtns{display:flex;gap:9px;margin:12px 0 2px}
+.simbtns .rbtn{flex:1}
+.rbtn.danger{background:none;border:1px solid #e5484d88;color:#ff9b9b}
+.rbtn.danger:hover{background:#e5484d22}
+.simvis{margin:12px 0 2px;text-align:center}
+.paydet{margin-top:12px}
+.paydet summary{cursor:pointer;color:#b9b9c2;font-size:12.5px;font-weight:600;padding:6px 0;outline:none}
+.paydet summary:hover{color:#fff}
+.lockvis{width:66px;height:66px;margin:2px auto}
+.lockvis .shk{transition:transform .5s;transform-origin:41px 30px}
+.lockvis.ok .shk{transform:rotate(-38deg)}
+.lockvis.ok .bod{fill:#12b76a}.lockvis.ok .shx{stroke:#12b76a}
+.lockvis.bad{animation:shake .45s}
+.lockvis.bad .bod{fill:#e5484d}.lockvis.bad .shx{stroke:#e5484d}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.mapvis{width:100%;max-width:290px;border-radius:12px;background:#11131a;margin:0 auto;display:block}
+.mp-ring{animation:ringpulse 1.6s infinite}
+@keyframes ringpulse{0%{opacity:.85}50%{opacity:.25}100%{opacity:.85}}
+.mp-sweep{transform-origin:145px 75px;animation:sweep 1.1s linear 2}
+@keyframes sweep{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.mp-pin{animation:pindrop .5s cubic-bezier(.2,1.6,.5,1)}
+@keyframes pindrop{from{transform:translateY(-26px);opacity:0}to{transform:none;opacity:1}}
+.gaugewrap{position:relative;width:170px;margin:0 auto}
+.gaugewrap .gnum{position:absolute;left:0;right:0;top:50px;font-family:'Space Grotesk';font-size:30px;font-weight:700;color:#fff}
+.gaugewrap .glab{position:absolute;left:0;right:0;top:86px;font-size:10px;letter-spacing:.1em;font-weight:800;color:#8a8a93;text-transform:uppercase}
+.garc{transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.frow{display:flex;align-items:center;gap:9px;background:#ffffff0d;border-radius:9px;padding:8px 11px;margin:6px auto;max-width:270px;font-size:12.5px;color:#e7e5ee;text-align:left;opacity:0;transform:translateY(6px);transition:.35s}
+.frow.show{opacity:1;transform:none}
+.frow .fic{width:18px;height:18px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;background:#ffffff1c;color:#8a8a93}
+.frow.okf .fic{background:#12b76a;color:#fff}
+.frow.badf .fic{background:#e5484d;color:#fff}
+.barsvis{display:flex;align-items:flex-end;gap:7px;justify-content:center;height:64px;margin:4px 0 6px}
+.barsvis i{width:16px;border-radius:4px 4px 0 0;background:#3a3a44;transition:height .8s cubic-bezier(.4,0,.2,1),background .8s;display:block}
+.latline{font-size:12px;color:#8a8a93;font-weight:600}
+.latline b{color:var(--green);font-family:'Space Grotesk';font-size:15px}
+.radarvis{position:relative;width:96px;height:96px;margin:0 auto 6px}
+.radarvis .rr{position:absolute;inset:0;border:2px solid var(--green);border-radius:50%;opacity:0;animation:rgrow 1.5s ease-out 3}
+.radarvis .rr:nth-child(2){animation-delay:.4s}
+.radarvis .rr:nth-child(3){animation-delay:.8s}
+@keyframes rgrow{0%{transform:scale(.2);opacity:.9}100%{transform:scale(1.15);opacity:0}}
+.radarvis .rtower{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:26px}
+.chiprow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.schip{border-radius:100px;padding:6px 13px;font-size:12px;font-weight:700;background:#ffffff14;color:#cfccd9;animation:rise .4s}
+.schip.g{background:#12b76a2b;color:#7ee2ae;border:1px solid #12b76a55}
+.schip.a{background:#ffca2820;color:#ffd76a;border:1px solid #ffca2844}
+.schip.r{background:#e5484d24;color:#ff9b9b;border:1px solid #e5484d55}
+.trigpill{display:inline-block;background:var(--ink);color:#fff;font-weight:800;letter-spacing:.1em;padding:9px 18px;border-radius:100px;margin:12px 0 4px;font-size:15px;border:2px dashed #86e090}
+.spin{display:inline-block;width:15px;height:15px;border:2px solid #ffffff44;border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:7px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.pill-ok{display:inline-flex;align-items:center;gap:7px;background:#86e09022;color:#1f7a34;border:1px solid #86e09055;padding:8px 14px;border-radius:100px;font-weight:700;font-size:13.5px;margin-top:12px}
+.pill-bad{display:inline-flex;gap:7px;background:#ff6b6b22;color:#c0392b;border:1px solid #ff6b6b55;padding:8px 14px;border-radius:100px;font-weight:700;font-size:13.5px;margin-top:12px}
+.trace{margin-top:12px}
+.trow{display:flex;align-items:center;gap:10px;font-size:13px;color:#b9b5c6;padding:6px 0;opacity:0;transform:translateX(-6px);animation:rise .3s forwards}
+.trow .tick{width:18px;height:18px;border-radius:50%;background:var(--green);color:#0d0d0d;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex:none}
+/* template creator */
+.tc{max-width:1180px;margin:0 auto;padding:26px;display:grid;grid-template-columns:380px 1fr;gap:26px;align-items:start}
+@media(max-width:900px){.tc{grid-template-columns:1fr}}
+.tcprev{position:sticky;top:78px}
+.phone{background:#0d0d0d;border-radius:38px;padding:11px;box-shadow:0 26px 60px rgba(20,10,40,.22);max-width:340px;margin:0 auto}
+.phone .scr{background:#e6ddd4;border-radius:29px;overflow:hidden;min-height:520px;display:flex;flex-direction:column}
+.phone .wahd{background:#075e54;color:#fff;padding:13px 15px;display:flex;align-items:center;gap:10px}
+.phone .wahd.rcs{background:linear-gradient(90deg,#871EFF,#6a0fd6)}
+.phone .wahd .av{width:34px;height:34px;border-radius:50%;background:#fff2;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.phone .wahd .nm{font-weight:600;font-size:14px}.phone .wahd .st{font-size:11px;opacity:.8}
+.phone .chat{padding:16px 12px;flex:1;background:#ece5dd}
+.phone .chat.rcs{background:#f3f0f8}
+.bub{background:#fff;border-radius:12px;max-width:88%;box-shadow:0 1px 1px #0002;overflow:hidden;margin-bottom:9px;animation:rise .3s}
+.bub img{width:100%;display:block;aspect-ratio:16/10;object-fit:cover;background:#ccc}
+.bub .bt{padding:9px 12px;font-size:13.5px;line-height:1.42;white-space:pre-wrap}
+.bub .wbtn{border-top:1px solid #eef0f1;padding:10px;text-align:center;color:#009de2;font-weight:600;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:6px}
+.carou{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.carou .cc{flex:0 0 140px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 2px #0002}
+.carou .cc img{width:100%;aspect-ratio:1/1;object-fit:cover}
+.carou .cc .ct{padding:7px 9px;font-size:11.5px;font-weight:600}
+.carou .cc .cb{border-top:1px solid #eef;padding:7px;text-align:center;color:#009de2;font-weight:600;font-size:11.5px}
+.tcform label{display:block;font-weight:700;font-size:12.5px;margin:14px 0 5px;color:#2a2733}
+.tcform input,.tcform textarea,.tcform select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:14px;font-family:inherit;outline:none;background:#fff}
+.tcform input:focus,.tcform textarea:focus{border-color:var(--violet)}
+.tabs{display:flex;gap:6px;background:#eceaf2;padding:5px;border-radius:12px;margin-bottom:6px}
+.tabs button{flex:1;border:none;background:none;padding:9px;border-radius:8px;font-weight:700;font-size:13.5px;cursor:pointer;color:#6b6774;font-family:inherit}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px #0001}
+.aibox{background:linear-gradient(135deg,#f3ecff,#fff);border:1px solid #e3d6ff;border-radius:14px;padding:14px;margin-bottom:8px}
+.section-lead{color:var(--grey);font-size:14px;margin:2px 2px 20px}
+.foot{background:#fafafb;border-top:1px solid var(--line);color:var(--grey);text-align:center;padding:30px 26px;font-size:12.5px}
+.foot b{color:var(--ink)}
+/* ---- customer stories ---- */
+.chip.stch{border-color:#0a0a0a;font-weight:800}
+.chip.stch.on{background:#0a0a0a;color:#fff}
+.scard{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:.18s;display:flex;flex-direction:column}
+.scard:hover{transform:translateY(-3px);box-shadow:0 14px 34px #0000000f}
+.scard .stop{height:118px;position:relative;display:flex;align-items:center;gap:14px;padding:0 20px;overflow:hidden}
+.scard .stop img.slogo{width:54px;height:54px;border-radius:14px;background:#fff;object-fit:contain;padding:6px;box-shadow:0 4px 14px #00000022;position:relative;z-index:2}
+.scard .stop .sco{position:relative;z-index:2;color:#fff}
+.scard .stop .sco b{font-family:'Space Grotesk';font-size:19px;display:block;letter-spacing:-.01em}
+.scard .stop .sco span{font-size:11.5px;opacity:.88;font-weight:600}
+.scard .sbody{padding:16px 20px 18px;flex:1;display:flex;flex-direction:column}
+.scard .shl{font-family:'Space Grotesk';font-weight:700;font-size:16.5px;margin-bottom:8px;color:var(--ink);letter-spacing:-.01em}
+.scard .sbl{font-size:13.5px;color:#55555e;line-height:1.5;flex:1}
+.scard .smx{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.scard .smx span{background:#f4f4f6;border-radius:100px;font-size:11.5px;font-weight:700;padding:5px 10px}
+.sth{position:relative;color:#fff;padding:26px;min-height:210px;display:flex;align-items:flex-end;overflow:hidden}
+.sth .stin{position:relative;max-width:1080px;margin:0 auto;width:100%;z-index:2}
+.sth .brandrow{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.sth .brandrow img{width:58px;height:58px;border-radius:14px;background:#fff;object-fit:contain;padding:7px;box-shadow:0 6px 18px #00000033}
+.sth .brandrow .bco b{font-family:'Space Grotesk';font-size:20px;display:block}
+.sth .brandrow .bco span{font-size:12.5px;opacity:.9;font-weight:600}
+.sth h1{font-family:'Space Grotesk';font-size:clamp(26px,4vw,40px);font-weight:700;letter-spacing:-.02em;max-width:760px;line-height:1.08}
+.simg{width:100%;border-radius:14px;margin-top:12px;display:block}
+.smetrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+@media(max-width:560px){.smetrics{grid-template-columns:1fr}}
+.smetric{background:#fafafb;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.smetric b{font-family:'Space Grotesk';font-size:23px;display:block;letter-spacing:-.01em}
+.smetric span{font-size:12px;color:var(--grey);font-weight:600;line-height:1.35;display:block;margin-top:4px}
+.squote{border-left:4px solid var(--line);padding:6px 0 6px 16px;font-size:15px;color:#3a3742;font-style:italic}
+.squote .qw{display:block;margin-top:8px;font-size:12.5px;color:var(--grey);font-style:normal;font-weight:700}
+</style>
+</head>
+<body>
+<div class="nav">
+  <a class="logo" onclick="home()"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"><b>Demo-World</b></a>
+  <div class="sp"></div>
+  <a class="nlink" onclick="home()">Demos</a>
+  <a class="nlink" onclick="gotoStories()">Customer stories</a>
+  <a class="nlink" onclick="gotoRes()">Resources</a>
+  <a class="nlink" onclick="openTC()">Template Creator</a>
+  <a class="nlink" onclick="gotoInternal()">Internal tools</a>
+  <a class="nlink" href="__HUB_URL__" target="_blank" rel="noopener">Hub ↗</a>
+  <a class="cta" onclick="openTC()">Build a template</a>
+  <a class="nlink" onclick="dwLogout()" title="Sign out" style="font-size:12.5px;color:#8b8698">Sign out</a>
+</div>
+
+<div class="hero" id="top">
+  <div class="grid-bg"></div>
+  <div class="in">
+    <img class="vmark" src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/v-mark.svg?v=2" alt="Vonage">
+    <p class="sub">One place to run real Vonage Communications & Network API demos in front of customers - messaging, voice, verify, network intelligence and more. Pick a use case, hit run.</p>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><path d="M21 21l-4.3-4.3M11 19a8 8 0 110-16 8 8 0 010 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" placeholder="Search demos, APIs or use cases…" oninput="render()"/>
+      <button onclick="document.getElementById('q').scrollIntoView();document.querySelector('.catbar').scrollIntoView({behavior:'smooth'})">Explore</button>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+</div>
+
+<div class="catbar" id="catbar"></div>
+<div class="wrap">
+  <div class="secttl"><h2 id="listtl">All demos</h2><span id="listcount"></span></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="reswrap" id="resources">
+  <div class="resin">
+    <div class="reshead">
+      <h2>Resources</h2>
+      <p>The official developer docs for every API in Demo-World, split by feature - plus the dashboard tools and the demo links themselves. Every line shows its URL, ready to copy into an email.</p>
+    </div>
+    <div id="resgrid"></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov"></div>
+<div class="foot">Vonage <b>Demo-World</b> · built for the field team · Communications APIs are live · <b>Network & Identity</b> demos are simulated to show the payload & flow.</div>
+
+<script src="/demoworld-stories.js"></script>
+<script>
+const WA='__WA_NUMBER__';
+const S3='https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/';
+const NM=S3+'nadinemerabi/', AV=S3+'avon/';
+const PH=id=>'https://images.unsplash.com/photo-'+id+'?w=800&q=72&auto=format&fit=crop';
+const PHOTOS={'rcs-branded':'1556742049-0cfed4f6a45d','wa-stylist':'1483985988355-763728e1935b','sms-reminder':'1576091160399-112ba8d25d1d','wa-tracking':'1586528116311-ad8dd3c8310d','rcs-carousel':'1441984904996-e0b6ba687e04','sms-marketing':'1490481651871-ab68de25d43d','wa-abandoned':'1563013544-824ae1b704d3','wa-support':'1552581234-26160f608093','verify-otp':'1614064641938-3bbee52942c7','verify-wa':'1611746872915-64382b5c76da','verify-voice':'1591696205602-2f950c417cb9','voice-ivr':'1556740738-b6a63e27c4df','voice-alert':'1521791136064-7986c2920216','voice-survey':'1533750349088-cd871a92f312','video-telehealth':'1576091160550-2173dba999ef','video-banking':'1600880292203-757bb62b4baf','insight-lookup':'1451187580459-43490279c0fa','sim-swap':'1510511459019-5dda7724fd87','silent-auth':'1590494165264-1ebe3602eb80','device-location':'1524661135-423995f22d0b','device-status':'1544197150-b99a580bb7a8','qod':'1542751371-adc38448a05e','identity-insights':'1554224155-6726b3ff858f','fraud-defender':'1550751827-4bd374c3f58b','kyc-match':'1551288049-bebda4e38f71','android-app':'1512941937669-90a1b58e7e9c','web-call':'1587560699334-cc4ff634909a','wa-call':'1611746872915-64382b5c76da','risk-flow':'1563986768609-322da13575f3','ai-call':'1589254065878-42c9da997008','conf-bridge':'1556761175-5973dc0f32e7','device-swap':'1510511459019-5dda7724fd87','location-verify':'1524661135-423995f22d0b'};
+const TOON='https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/toon/';
+function photoUrl(d){return TOON+d.id+'.jpg';}
+function photoFallback(d){return PH(PHOTOS[d.id]||'1451187580459-43490279c0fa');}
+/* ---- category meta ---- */
+const CATS={
+ messaging:{name:'Messaging',color:'#871EFF',grad:'linear-gradient(135deg,#871EFF,#fb8fd8)'},
+ verify:{name:'Verify & 2FA',color:'#0aa06e',grad:'linear-gradient(135deg,#0aa06e,#86e090)'},
+ voice:{name:'Voice',color:'#e8623a',grad:'linear-gradient(135deg,#e8623a,#fcac98)'},
+ video:{name:'Video',color:'#0ea5a0',grad:'linear-gradient(135deg,#0ea5a0,#7ee0d3)'},
+ insight:{name:'Number Insight',color:'#2b8bff',grad:'linear-gradient(135deg,#2b8bff,#7cc4ff)'},
+ network:{name:'Network APIs',color:'#5a14d0',grad:'linear-gradient(135deg,#5a14d0,#cba1fa)'},
+ identity:{name:'Identity',color:'#111',grad:'linear-gradient(135deg,#2a2340,#871EFF)'},
+ mobile:{name:'Mobile Apps',color:'#16a34a',grad:'linear-gradient(135deg,#0d0d0d,#16a34a)'},
+ integrations:{name:'Integrations',color:'#0aa06e',grad:'linear-gradient(135deg,#0D0D0D,#0aa06e)'},
+ internal:{name:'Internal tools',color:'#6b7280',grad:'linear-gradient(135deg,#6b7280,#b8bfc7)'}
+};
+const IC={
+ chat:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 3V5z"/></svg>',
+ video:'<svg viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>',
+ shield:'<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.3 8.4-7 10-3.7-1.6-7-5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>',
+ phone:'<svg viewBox="0 0 24 24"><path d="M6 3h4l2 5-3 2a11 11 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 014 6a2 2 0 012-3z"/></svg>',
+ sim:'<svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M10 12h4v5h-4z"/></svg>',
+ target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>',
+ pin:'<svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 00-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+ fp:'<svg viewBox="0 0 24 24"><path d="M12 4a8 8 0 018 8"/><path d="M12 8a4 4 0 014 4v4"/><path d="M8 12a4 4 0 018 0v6"/><path d="M4 12a8 8 0 018-8"/></svg>',
+ cart:'<svg viewBox="0 0 24 24"><path d="M5 6h15l-2 9H7L5 6z"/><path d="M5 6L4 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg>',
+ bell:'<svg viewBox="0 0 24 24"><path d="M6 16V10a6 6 0 1112 0v6l2 3H4l2-3z"/><path d="M10 20a2 2 0 004 0"/></svg>',
+ truck:'<svg viewBox="0 0 24 24"><path d="M3 6h11v9H3z"/><path d="M14 9h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.5"/><circle cx="17" cy="18" r="1.5"/></svg>',
+ wave:'<svg viewBox="0 0 24 24"><path d="M2 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/></svg>',
+ signal:'<svg viewBox="0 0 24 24"><path d="M5 19v-4M10 19v-8M15 19v-12M20 19V5"/></svg>'
+};
+/* ---- DEMOS ---- */
+const DEMOS=[
+ {id:'sf-connector',cat:'integrations',api:'Salesforce · CTI + Messaging',ic:'chat',title:'Vonage for Salesforce',customer:'Universities & multi-brand teams',mock:false,run:'install',
+  installUrl:'https://login.salesforce.com/packaging/installPackage.apexp?p0=04tgK000000ENKvQAO', webInstallUrl:'/sf/install', setupUrl:'https://orgfarm-e071de8a6a-dev-ed.develop.my.salesforce.com/apex/VonageUniversities',
+  blurb:'Native Salesforce softphone, WhatsApp/RCS/SMS on the record, inbound routing by phone number, and multi-university (multi-tenant) setup - installed with one link.',
+  useCase:'A full Vonage integration living inside Salesforce: a docked softphone that screen-pops the matching Lead/Contact on every inbound call, WhatsApp/RCS/SMS from the record with templates, and call + message logging to the timeline. It is multi-tenant by design - attach phone numbers to universities (or brands), assign agents to each, and inbound calls route to the right team automatically, all configured from a setup page inside Salesforce. One-click install into any org.',
+  steps:['Click Install - authorize the connector into your Salesforce org','Open the Vonage Universities setup page in Salesforce','Add your universities, attach phone numbers to each, assign agents','Point each number\'s Answer URL at the Vonage routing endpoint','Open a contact - the softphone docks and inbound calls screen-pop + route by university'],
+  payloadNote:'Native Apex + Visualforce connector; inbound routing on Vonage Cloud + Demo World; live audio tap available.'},
+
+ {id:'hubspot-connector',cat:'integrations',api:'HubSpot · Messaging + Voice',ic:'chat',title:'Vonage for HubSpot',customer:'Sales & marketing teams',mock:false,run:'install',
+  installUrl:'__HUBSPOT_GUIDE_URL__',
+  blurb:'WhatsApp, RCS and SMS plus click-to-call inside HubSpot - every reply logged to the contact timeline. Each portal connects its own Vonage account.',
+  useCase:'A HubSpot marketplace app that adds Vonage cards to every contact record: send WhatsApp/RCS/SMS, run approved WhatsApp template sends, place calls, and see a unified two-way inbox. Fully multi-tenant - each HubSpot portal connects its own Vonage account and numbers, verified and auto-wired on setup. Install from the HubSpot marketplace.',
+  steps:['Install the app from the HubSpot marketplace (OAuth)','Add the Vonage cards to your contact view','Open the Vonage Settings card and connect your own Vonage account','Send WhatsApp/RCS/SMS from any contact; replies land in the inbox'],
+  payloadNote:'HubSpot public app + Vonage Cloud Runtime backend; per-portal Vonage credentials.'},
+
+ {id:'wa-optout',cat:'internal',api:'WhatsApp · Messages API proxy',ic:'chat',title:'WhatsApp Opt-Out Manager',customer:'Any brand sending WhatsApp',mock:false,run:'tool',toolUrl:'__OPTOUT_URL__',
+  blurb:'Drop-in opt-out compliance on Vonage Cloud Runtime: a Vonage-compatible proxy that blocks sends to customers who texted your opt-out keyword. Change one URL, keep your payloads.',
+  useCase:'Brands must honour STOP requests on WhatsApp, but building suppression lists into every system is slow. This proxy sits in front of the Vonage Messages API: register each WhatsApp number (from this account or any other Vonage account), choose the opt-out and opt-in keywords and confirmation messages per business, and route existing traffic through the proxy by changing only the base URL. When a customer texts the keyword, they are suppressed instantly - any further API send to them returns a clear 403 and never reaches Vonage. Texting the opt-in word restores them.',
+  steps:['Open the console - your WhatsApp number is pre-connected','Send yourself a message from the UI (or from Postman via the proxy URL)','Reply with the opt-out word (default STOP) - you get the confirmation message','Try sending again - the proxy blocks it with a 403 "Recipient has opted out"','Reply with the opt-in word (START) and sends flow again'],
+  payloadNote:'Live: Vonage Messages API passthrough proxy + per-sender suppression lists, hosted on Vonage Cloud Runtime (VCR).'},
+
+ {id:'video-maker',cat:'internal',api:'Internal tool · AI',ic:'video',title:'RCS Demo Video Maker',customer:'For the demo team',mock:false,run:'tool',toolUrl:'/demoworld-videomaker.html',
+  blurb:'Describe the demo, upload only the brand icon - AI writes the RCS conversation AND generates the card imagery, then renders a branded demo video in your browser.',
+  useCase:'Client demos often need a video of their future RCS experience before anything is built. This tool turns a plain-language brief into a full conversation script - welcome message, rich cards with buttons, OTP, and the compliant STOP / opt-out flow - branded with the client\'s name, colour and icon. Review and edit every message, then render a phone-styled video and download it, all client-side. No agent, no approval, no code needed.',
+  steps:['Open the tool and enter the brand name, colour and icon','Describe what the demo should show - offers, cards, buttons, opt-out','AI writes the script; edit any message, button or chip','AI generates the rich-card images too - regenerate any you don\'t like','Press Render - a phone-styled video downloads, ready to send to the client'],
+  payloadNote:'AI script via Bedrock + AI card imagery via Gemini; video rendered and recorded entirely in your browser.'},
+
+ {id:'rcs-skincoach',cat:'messaging',api:'RCS · Messages API + AI Vision',ic:'chat',title:'Avon AI Skin Coach',customer:'Avon & beauty brands',mock:false,run:'receive',channel:'rcs',
+  blurb:'Send a selfie on RCS - AI analyses your skin (type, hydration, blemishes, fine lines) and replies with matching Avon products in a shoppable carousel.',
+  useCase:'Beauty brands turn the messaging inbox into a personal consultation. A customer sends a selfie to the verified RCS agent; AI vision scores skin type, hydration, blemishes, fine lines and dark spots, then replies with a personal skin report and a carousel of real Avon products matched to those concerns - each opening a branded mini-store in a webview. Diagnosis-to-checkout in one thread, no app install.',
+  steps:['Enter the mobile number to receive the demo','We send the Avon Skin Coach welcome card on RCS','Reply with a selfie 🤳 - AI analyses it in seconds','You get a skin report + a shoppable product carousel matched to your skin','Tap any product to open the Avon mini-store webview'],
+  payloadNote:'Live: Vonage Messages API (RCS) + Gemini AI vision + Avon mini-store on Vonage Cloud Runtime.'},
+
+ {id:'rcs-wayfair',cat:'messaging',api:'RCS · Messages API',ic:'cart',title:'Wayfair Hot Deals + Checkout',customer:'Wayfair & e-commerce',mock:false,run:'receive',channel:'rcs',agentTrigger:'WAYFAIR',
+  blurb:'A hot-deals carousel with in-thread checkout (Google Pay / Apple Pay / card) - and an automatic abandoned-cart win-back with 10% off.',
+  useCase:'Conversational commerce end-to-end on RCS: a verified Wayfair agent sends a swipeable hot-deals carousel; every card opens a branded mini-store webview where the shopper checks out in seconds with Google Pay, Apple Pay or card. Leave the basket without paying and the agent automatically follows up moments later with a win-back rich card - an extra 10% off, already applied when the shopper reopens the checkout. Discovery, purchase and cart recovery, all inside one message thread.',
+  steps:['Enter the mobile number to receive the demo','You get the Wayfair Hot Deals welcome card - tap “Show hot deals 🔥”','Swipe the carousel and tap Buy now - the checkout opens in a webview','Close the checkout WITHOUT paying and wait ~5 seconds','An abandoned-cart card arrives with an extra 10% off - open it to see the discount applied, then pay with Google Pay / Apple Pay / card'],
+  payloadNote:'Live: Vonage Messages API (RCS) + Wayfair mini-store with simulated payments.'},
+
+ {id:'rcs-branded',cat:'messaging',api:'RCS · Messages API',ic:'cart',title:'Branded RCS Rich Cards',customer:'AURELIA & retail',mock:false,run:'receive',channel:'rcs',
+  blurb:'Verified sender, logo, colour and a swipeable product carousel - right inside the native messaging app.',
+  useCase:'RCS Business Messaging turns the default SMS app into a branded, interactive storefront. Verified sender identity builds trust, and rich cards, carousels and suggested replies drive conversion far above plain SMS. Retailers use it for launches, offers and conversational commerce.',
+  steps:['Enter the mobile number to receive the demo','We send a verified “Vonage” RCS rich card with an image, text and tappable buttons','Open it in Google Messages to see the branded, interactive experience'],
+  payloadNote:'Sent live via the Vonage Messages API (channel: rcs).'},
+
+ {id:'peak-season',cat:'messaging',api:'RCS · Messages API + Verify + Voice + AI Vision',ic:'chat',title:'Peak Season Promotions - Event RCS Demo',customer:'Vonage x Telefonica event',mock:false,run:'receive',channel:'rcs',agentTrigger:'PEAK',
+  blurb:'The full event experience in one RCS thread, all cards and carousels: a picture-only welcome followed by the menu carousel, agenda with calendar actions, every Vonage solution in two carousels (each with a 30-second colour explainer sent as a native video message, plus product page and developer docs in a medium webview), seven games, an AI that builds a branded demo from a photo, real customer stories linked to vonage.com, a real Verify code checked in the thread, and a showcase of shopping, voice, video and documents. Every stop has a Back to menu button, and any typed question about Vonage gets an AI answer.',
+  useCase:'Built for the Vonage x Telefonica Peak Season Promotions event. A guest sends PEAK (or scans the code) and gets a welcome card plus a menu carousel. From there: the agenda (add any session to the calendar, open the full agenda webview, receive the PDF), all 18 Vonage solutions across two carousels (each card links to a 30-second colour explainer video, the real vonage.com product page and the developer.vonage.com docs, all in medium webviews), a 60-second explainer of rich messaging with live dial, map and calendar actions, seven games (RCS quiz, emoji decoder, true or false, higher or lower, memory match, tap the V, and a live room poll; webview games post the result back into the chat as a card), an AI branded RCS demo (send a photo of a logo or product; Gemini reads it and builds a branded RCS carousel with three customer messages and generated images), ten real customer stories (Aramex, Vinted, Revolut, Remitly, BlaBlaCar, Kiwi.com, Grab, Zalora, Carousell, Dunelm) as black-and-white cards each opening the actual vonage.com story in a medium webview, a real Verify v2 one-time code checked inside the thread, and a showcase: AURELIA shopping with checkout webview, a live Voice API call, a Vonage Video room, the agenda PDF as a file message, and the same demo on WhatsApp. Every webview opens in a medium (TALL) webview.',
+  steps:['Enter your number and tap Send, or scan the code to open the agent with PEAK ready to send','Wait for the menu carousel (5 seconds after the welcome picture) and tap a section: Agenda, All Vonage solutions, What is rich messaging, Games, Branded demo, Demo showcase, Customer stories, Find out more','For the branded demo, tap Build my demo and then send any photo of a logo, product or storefront','Tap Send me a code in the showcase and type the 6-digit code back into the chat'],
+  payloadNote:'Live conversational RCS + WhatsApp via the Messages API. Trigger word PEAK. Also uses Verify v2, the Voice API, Gemini vision + image generation, and webviews hosted on this instance.'},
+ {id:'peak-season-wa',cat:'messaging',api:'WhatsApp · Messages API',ic:'chat',title:'Peak Season Promotions - WhatsApp',customer:'Vonage x Telefonica event',mock:false,run:'converse',trigger:'PEAK',
+  blurb:'The same event demo on WhatsApp: image cards with reply buttons, list menus, CTA links, a real Verify code and the AI branded demo from a photo.',
+  useCase:'Identical journey to the RCS version, rendered with WhatsApp building blocks: image messages with captions, interactive reply buttons, every carousel as an image plus a list menu (a row opens that card with its links), CTA URL buttons for the webviews, location messages for the venue, and file messages for the PDF. Reply MENU at any time to get the menu back. Same backend, same trigger, same code path, which is the point: one Messages API integration, two channels.',
+  steps:['Scan the QR - it opens WhatsApp to the Vonage number with the word PEAK ready to send','Send it and use the buttons and list menus to move around','Send a photo after tapping Build my demo to get a branded demo back','Type the 6-digit code when the showcase sends you one'],
+  payloadNote:'WhatsApp interactive messages (button, list, cta_url), image, file and location via the Messages API. Same peak.js module as the RCS tile.'},
+ {id:'epark-parking',cat:'messaging',api:'RCS · Messages API',ic:'cart',title:'ePARK - Book & Pay for Parking',customer:'ePARK · Nordic parking',mock:false,run:'receive',channel:'rcs',agentTrigger:'PARKING',
+  blurb:'A full parking journey over RCS: say PARKING, choose a service, book a spot on a live map, pay with Apple Pay or Google Pay, and get your ticket with the exact location.',
+  useCase:'ePARK runs the whole parking journey inside one branded, verified RCS thread. The driver sends PARKING (or scans the code), gets a welcome and a service menu, taps Book a parking to open a full-screen map webview, picks a zone and duration, and pays with Apple Pay, Google Pay or card. On payment they receive a thank-you message with their live ticket and a map showing exactly where they parked - no app install and no website hop.',
+  steps:['Enter your number and tap Send, or scan the code to open the ePARK agent with PARKING ready to send','ePARK welcomes you and shows a service menu - tap Book a parking','A full-screen map opens: choose a zone, set the time, and pay with Apple Pay, Google Pay or card','You get a thank-you message with your ticket and a map webview showing your parking spot'],
+  payloadNote:'Live conversational RCS via the Vonage Messages API. Trigger word PARK. The card buttons open FULL and MEDIUM webviews hosted on this instance.'},
+
+ {id:'wa-stylist',cat:'messaging',api:'WhatsApp · Messages API',ic:'chat',title:'WhatsApp AI Shopping Assistant',customer:'AURELIA',mock:false,run:'converse',trigger:'Style',
+  blurb:'An AI stylist that asks about the occasion, then replies with real product cards - photos, prices and shop links.',
+  useCase:'Conversational commerce on WhatsApp: a shopper sends a trigger word and an AI stylist (grounded in the live AURELIA catalogue) styles them, replying with rich product cards - images, prices and deep links to checkout. It turns a chat into a personal boutique.',
+  steps:['Scan the QR - it opens WhatsApp to AURELIA with the word “Style” ready to send','Send it. The AI stylist greets you and asks about your occasion & colour','Reply with your taste - it sends matching pieces with photos + shop links','Ask “where can I try these on?” for the store-locator card'],
+  payloadNote:'Live AI agent on the Vonage Messages API + Amazon Bedrock.'},
+
+ {id:'sms-reminder',cat:'messaging',api:'SMS · Messages API',ic:'bell',title:'SMS Appointment Reminder',customer:'Healthcare providers',mock:false,run:'receive',channel:'sms',
+  blurb:'A timely, reliable text reminder that cuts no-shows - global reach, sub-second delivery.',
+  useCase:'Missed appointments cost healthcare billions. A simple, reliable SMS reminder with a confirm/reschedule reply cuts no-show rates dramatically. SMS reaches any handset with no app required, making it the backbone of critical notifications.',
+  steps:['Enter your mobile number','We send a live appointment-reminder SMS from Vonage','Reply to see how two-way SMS confirmations work'],
+  payloadNote:'Sent live via the Vonage SMS API.'},
+ {id:'viber-marketing',cat:'messaging',api:'Viber · Messages API',ic:'chat',title:'Viber Promotions',customer:'AURELIA & retail',mock:false,run:'receive',channel:'viber',
+  blurb:'A branded promotion on Viber - hero image, offer text and a tappable action button from the business profile.',
+  useCase:'Viber is the primary messenger in large parts of Europe, the Balkans, CEE and APAC. Business Messages let brands send image-rich promotions with action buttons from a verified profile - reaching customers where SMS feels flat and WhatsApp is not dominant. Sessions are two-way, so replies land back with your team.',
+  steps:['Enter the mobile number of a phone with Viber installed','We send a live promotion: a hero image, the offer and a Shop button','Open it in Viber and tap the button to see the action flow'],
+  payloadNote:'Sent live via the Vonage Messages API (channel: viber_service, category: promotion).'},
+ {id:'viber-transactional',cat:'messaging',api:'Viber · Messages API',ic:'bell',title:'Viber Order Updates',customer:'Retail & logistics',mock:false,run:'receive',channel:'viber',
+  blurb:'Transactional order confirmations on Viber with a live tracking button - delivered on the app your customers actually open.',
+  useCase:'Order and delivery updates get far higher open rates on Viber than email in Viber-first markets. The transaction category is built for exactly this: reliable, timestamped updates from a verified sender, with an action button straight to tracking - and customers can reply to reach support in the same thread.',
+  steps:['Enter the mobile number of a phone with Viber installed','We send a live order confirmation with a View-my-order button','Reply to the message to see two-way support in the same thread'],
+  payloadNote:'Sent live via the Vonage Messages API (channel: viber_service, category: transaction).'},
+ {id:'viber-media',cat:'messaging',api:'Viber · Messages API',ic:'video',title:'Viber Video & File',customer:'Retail, travel & services',mock:false,run:'receive',channel:'viber',
+  blurb:'Send a product video and a PDF straight into the Viber thread - no app install, no attachment friction.',
+  useCase:'Viber Business Messages carry real media: a product or how-to video plays inline, and documents (price lists, tickets, invoices, statements) arrive as proper files the customer can keep. For travel and services this replaces the email attachment entirely - delivered to the app people actually open, from a verified business profile.',
+  steps:['Enter the mobile number of a phone with Viber installed','We send a video, then a PDF price list','Both arrive in the same branded Viber thread'],
+  payloadNote:'Sent live via the Vonage Messages API (channel: viber_service, message_type: video then file).'},
+ {id:'viber-capabilities',cat:'internal',api:'Viber · Messages API',ic:'sparkle',title:'Viber Capability Tour',customer:'For the demo team',mock:false,run:'receive',channel:'viber',
+  blurb:'Every Viber message type Vonage supports, sent back to back: text with a button, image, video and file.',
+  useCase:'The fastest way to show a prospect what Viber Business Messages can do. In one tap the handset receives the full supported set - a text with an action button, a captioned image with a button, an inline video, and a PDF document - all from the same verified business profile, all two-way so replies come back to the team.',
+  steps:['Enter the mobile number of a phone with Viber installed','We send four messages in sequence: text, image, video, file','Reply to any of them to show two-way messaging in the same thread'],
+  payloadNote:'Sent live via the Vonage Messages API. Note: Viber carousels/rich-media are NOT supported by Vonage - the API accepts them but the DLR returns rejected (error 1020).'},
+
+ {id:'wa-tracking',cat:'messaging',api:'WhatsApp · Messages API',ic:'truck',title:'WhatsApp Order Tracking',customer:'Delivery & logistics',mock:false,run:'converse',trigger:'Track',
+  blurb:'Ask “where’s my parcel?” on WhatsApp and get a live status card with a tracking button.',
+  useCase:'Delivery platforms handle tracking on WhatsApp - the channel customers already live in. A customer messages the order flow and gets an instant status card with a deep-linked tracking button, cutting “where is my order?” calls to support.',
+  steps:['Scan the QR - it opens WhatsApp with the word “Track” pre-filled','Send it. The order flow replies with a live delivery-status card','Tap the tracking button to see the deep-linked experience'],
+  payloadNote:'Live flow on the Vonage Messages API (channel: whatsapp).'},
+
+ {id:'rcs-carousel',cat:'messaging',api:'RCS · Messages API',ic:'cart',title:'RCS Product Carousel',customer:'AURELIA',mock:false,run:'receive',channel:'rcs',
+  blurb:'A swipeable carousel of products - each with its own image, price and Shop button - in the native messaging app.',
+  useCase:'RCS carousels let a brand merchandise several products in one interactive message. Shoppers swipe through cards, each deep-linking to checkout - a mobile storefront delivered straight to the inbox, no app install.',
+  steps:['Enter the mobile number to receive the demo','We send a verified AURELIA RCS carousel of three pieces','Swipe through the cards and tap Shop on any one'],
+  payloadNote:'Sent live via the Vonage Messages API (RCS carousel).'},
+
+ {id:'sms-marketing',cat:'messaging',api:'SMS · Messages API',ic:'bell',title:'SMS Marketing Broadcast',customer:'Retail & D2C',mock:false,run:'receive',channel:'sms',
+  blurb:'A concise promotional text with a shop link and compliant opt-out - the workhorse of reach.',
+  useCase:'SMS still delivers unmatched reach and open rates for time-sensitive offers. A short, compliant broadcast with a link drives traffic instantly, on any handset, worldwide.',
+  steps:['Enter your mobile number','We send a live AURELIA sale SMS with a shop link','Note the STOP opt-out - built-in compliance'],
+  payloadNote:'Sent live via the Vonage SMS API.'},
+
+ {id:'wa-abandoned',cat:'messaging',api:'WhatsApp · Messages API',ic:'cart',title:'WhatsApp Abandoned Cart',customer:'AURELIA',mock:false,run:'converse',trigger:'Cart',
+  blurb:'Win back a shopper who left a full bag - a friendly nudge with the item and a one-tap way back.',
+  useCase:'Most carts are abandoned. A timely, personal WhatsApp nudge - showing the exact item with a “complete order” button - recovers revenue that email misses, in the channel customers actually read.',
+  steps:['Scan the QR - it opens WhatsApp with the word “Cart” ready to send','Send it. The assistant shows your saved bag with a Complete order button','Tap through to the pre-filled checkout'],
+  payloadNote:'Live flow on the Vonage Messages API + Amazon Bedrock.'},
+
+ {id:'wa-support',cat:'messaging',api:'WhatsApp · Messages API',ic:'chat',title:'WhatsApp AI Support Agent',customer:'AURELIA',mock:false,run:'converse',trigger:'Help',
+  blurb:'A 24/7 AI agent that answers delivery, returns and sizing questions - and escalates to a human.',
+  useCase:'An AI support agent on WhatsApp deflects the bulk of routine questions - delivery, returns, sizing, tracking - instantly and in brand voice, handing off to a human only when needed. Lower cost per contact, higher CSAT.',
+  steps:['Scan the QR - it opens WhatsApp with the word “Help” ready to send','Ask anything: “what’s your returns policy?”, “where’s my order?”','The AI answers instantly and offers a store or a human stylist'],
+  payloadNote:'Live AI agent on the Vonage Messages API + Amazon Bedrock.'},
+
+ {id:'verify-otp',cat:'verify',api:'Verify API',ic:'shield',title:'Two-Factor Auth · SMS Code',customer:'Fintech & neobanks',mock:false,run:'verify',channel:'sms',
+  blurb:'Send a one-time passcode and validate it - with automatic failover and fraud protection built in.',
+  useCase:'The Verify API is a complete 2FA workflow in two API calls: request a code, then check it. Vonage handles code generation, delivery, retries and channel failover (SMS→voice→WhatsApp), plus built-in anti-fraud. Fintechs use it to secure sign-in and payments.',
+  steps:['Enter your mobile number and press “Send code”','Vonage generates and sends a real one-time passcode','Type the code you received and press “Verify” to complete the check'],
+  payloadNote:'Live end-to-end on the Vonage Verify API.'},
+
+ {id:'verify-wa',cat:'verify',api:'Verify API · WhatsApp',ic:'shield',title:'2FA over WhatsApp',customer:'Global marketplaces',mock:false,run:'verify',channel:'whatsapp',
+  blurb:'Deliver the passcode over WhatsApp for higher deliverability and a branded experience.',
+  useCase:'Verify can deliver the passcode over WhatsApp instead of SMS - cheaper in many markets, branded, and with higher open rates. The same two-call workflow, a different channel. Marketplaces use it to verify buyers and sellers worldwide.',
+  steps:['Enter your WhatsApp number and press “Send code”','Vonage delivers a one-time passcode via WhatsApp','Enter the code and press “Verify”'],
+  payloadNote:'Live on the Vonage Verify API (WhatsApp channel).'},
+
+ {id:'verify-voice',cat:'verify',api:'Verify API · Voice',ic:'phone',title:'2FA over a Voice Call',customer:'Accessibility & landlines',mock:false,run:'verify',channel:'voice',
+  blurb:'Deliver the passcode as an automated phone call - for landlines or when SMS can’t reach.',
+  useCase:'Verify can read the passcode aloud over a phone call - essential for landlines, accessibility, and as automatic failover when SMS is undelivered. Same two-call workflow, delivered by voice.',
+  steps:['Enter a phone number and press “Send code”','Vonage calls the number and reads out the code','Type the code you heard and press “Verify”'],
+  payloadNote:'Live on the Vonage Verify API (voice channel).'},
+
+ {id:'risk-flow',cat:'verify',api:'Insight + Network + Verify',ic:'shield',title:'Risk-Based Login Pipeline',customer:'Fintech & marketplaces',mock:false,run:'riskflow',
+  blurb:'Three APIs chained into one sign-in decision: live number intelligence, a SIM-swap check, then a real OTP - how modern banks fight account takeover.',
+  useCase:'Real fraud stacks never trust a single signal. This pipeline chains three Vonage capabilities into one decision: Number Insight profiles the number live (carrier, country, porting), the SIM Swap Network API checks for a recent swap - the classic account-takeover move - and only then does the Verify API send a real one-time passcode. Low-risk users sail through; risky ones get stepped up or blocked. Security without friction, in one orchestrated flow.',
+  steps:['Enter your mobile number and press “Run the pipeline”','Step 1 runs a live Number Insight lookup - carrier, country and porting history appear','Step 2 clears the number against a SIM-swap check (simulated Network API)','Step 3 sends a real OTP to your phone - enter it to complete the approved sign-in'],
+  payloadNote:'Steps 1 and 3 are live (Number Insight + Verify v2). Step 2 is a simulated Network API call.'},
+
+ {id:'voice-ivr',cat:'voice',api:'Voice API',ic:'phone',title:'Programmable Voice Callback',customer:'Contact centres',mock:false,run:'call',
+  blurb:'Trigger an instant automated call with text-to-speech - the building block of IVR and alerts.',
+  useCase:'The Voice API builds calls from simple instructions (NCCO): speak, gather input, route, record, connect. Contact centres use it for callbacks, IVR menus and proactive alerts - no telephony hardware, fully programmable, global carrier-grade voice.',
+  steps:['Enter your number and press “Call me”','Vonage places a live outbound call to your phone','Answer to hear a branded text-to-speech message'],
+  payloadNote:'Live outbound call via the Vonage Voice API.'},
+
+ {id:'web-call',cat:'voice',api:'Client SDK · Voice API',ic:'phone',title:'Call & Speak from the Browser',customer:'Web & in-app calling',mock:false,run:'webcall',
+  blurb:'A real two-way phone in the browser - dial out to any number, or call the web line and answer on the page.',
+  useCase:'The Vonage Client SDK gives a browser a real WebRTC voice leg. A visitor clicks call and speaks straight from the page; Vonage bridges it to a phone number or an agent. Retailers and banks use it for "click to call" support and in-app calling with zero PSTN cost to the customer.',
+  steps:['Open the web dialer and allow the microphone','Dial out: type any number and press call','Or dial in: call +44 7441 445920 from your phone - the browser rings, press answer','Talk both ways over WebRTC - a real two-way conversation'],
+  payloadNote:'Live WebRTC via the Vonage Client SDK (browser) bridged over the Voice API.'},
+
+ {id:'wa-call',cat:'voice',api:'WhatsApp Business Calling',ic:'chat',title:'Call a Customer on WhatsApp',customer:'Conversational voice',mock:false,run:'wacall',
+  blurb:'Ring a customer inside WhatsApp - the same thread they chat in becomes a voice call.',
+  useCase:'WhatsApp Business Calling lets a brand place a voice call that rings inside WhatsApp, so support and sales move from chat to voice without asking for a phone number or switching apps. The customer answers in the app they already trust.',
+  steps:['Enter the customer’s WhatsApp number (447…, no plus)','Send the in-chat permission request - they tap Allow once','Press Call - their WhatsApp rings with the business name','They answer in-app and hear the message'],
+  payloadNote:'Live via WhatsApp Business Calling on the Vonage Voice API. Requires calling enabled on the sender number.'},
+
+ {id:'voice-alert',cat:'voice',api:'Voice API',ic:'bell',title:'Critical Voice Alert',customer:'Utilities & on-call teams',mock:false,run:'call',msg:'This is a Vonage critical alert. A high priority incident has been detected. Press 1 to acknowledge.',
+  blurb:'When a text isn’t enough - a phone that rings until someone acknowledges the incident.',
+  useCase:'For critical alerts (outages, on-call escalation), voice cuts through when SMS is ignored. Vonage places automated calls with escalation logic and DTMF acknowledgement, so the right person confirms they’re on it.',
+  steps:['Enter your number and press “Call me”','Vonage places a live critical-alert call','Hear the escalation message and acknowledgement prompt'],
+  payloadNote:'Live outbound call via the Vonage Voice API.'},
+
+ {id:'voice-survey',cat:'voice',api:'Voice API',ic:'wave',title:'Automated CSAT Survey Call',customer:'Contact centres',mock:false,run:'call',msg:'Hello, this is a quick one question survey from Vonage Demo World. On a scale of one to five, how satisfied were you with your recent experience? This is a demonstration of automated voice surveys powered by the Vonage Voice A P I. Thank you, and goodbye.',
+  blurb:'Automate post-interaction surveys with a friendly voice call and capture the response.',
+  useCase:'Instead of ignored email surveys, an automated voice call right after an interaction captures feedback while it’s fresh. The Voice API speaks the question and gathers the response - measuring CSAT at scale.',
+  steps:['Enter your number and press “Call me”','Vonage places a live automated survey call','Answer to hear the survey prompt'],
+  payloadNote:'Live outbound call via the Vonage Voice API.'},
+
+ {id:'ai-call',cat:'voice',api:'Voice API + Amazon Bedrock',ic:'wave',title:'AI-Scripted Voice Agent',customer:'Proactive outreach teams',mock:false,run:'aicall',
+  blurb:'Type a one-line brief - AI writes the exact call script and Vonage speaks it to any phone, seconds later.',
+  useCase:'Combine generative AI with programmable voice and every outbound call becomes personal. The model drafts a natural spoken script from your context - a delivery update, a renewal reminder, a win-back offer - and the Voice API places the call with lifelike text-to-speech. One workflow, thousands of individually-written calls; the same pattern powers full AI voice agents.',
+  steps:['Describe the call in one line, e.g. “remind Sarah her dental appointment is tomorrow at 3pm”','Press “Draft & call” - Bedrock writes the exact spoken script and shows it to you','Vonage places a live call to your number and speaks the AI script','Change the brief and run it again - every call is written fresh'],
+  payloadNote:'Live end-to-end: Amazon Bedrock drafts the script, the Vonage Voice API speaks it on a real call.'},
+
+ {id:'conf-bridge',cat:'voice',api:'Voice API · Conversation',ic:'phone',title:'Instant Conference Bridge',customer:'Sales & support handoffs',mock:false,run:'bridge',
+  blurb:'Enter two phone numbers - Vonage rings both and drops them into one live conference. No dial-in, no PIN.',
+  useCase:'The Voice API can place several calls and join them in a named conversation - the primitive behind warm transfers, click-to-conference and expert-on-demand. No dial-in numbers or access codes: the platform calls everyone and the room assembles itself. The same building block scales to N participants, whisper legs, moderated and recorded rooms.',
+  steps:['Enter two real phone numbers - yours and a colleague’s','Press “Bridge the call” - Vonage rings both at once','Each hears a short greeting, then you are talking to each other in one conference','The same primitive scales to N participants and recorded rooms'],
+  payloadNote:'Two live outbound calls joined in one Vonage conversation (conference) - all Voice API.'},
+
+ {id:'video-telehealth',cat:'video',api:'Video API',ic:'video',title:'Video Telehealth Consultation',customer:'Telehealth & healthcare',mock:false,run:'video',
+  blurb:'A branded, in-browser video room for doctor-patient consultations - no app, no download.',
+  useCase:'The Vonage Video API embeds live, high-quality video into any web or mobile app. Telehealth providers use it for virtual consultations - the patient joins from a link with no install, over encrypted, healthcare-grade sessions.',
+  steps:['Open the room on this device and allow camera & mic','Scan the QR from a second device to join as the patient','You are both in one live Vonage video session'],
+  payloadNote:'Live on the Vonage Video API (HTTPS required for camera).'},
+
+ {id:'video-banking',cat:'video',api:'Video API',ic:'video',title:'Video Advisor / Banking',customer:'Wealth & financial services',mock:false,run:'video',
+  blurb:'Face-to-face video advice embedded in the app - onboarding, mortgages, wealth reviews.',
+  useCase:'Banks and advisors use embedded video to bring the branch experience online - screen-shareable, recordable video sessions for high-value conversations, with no app for the customer to install.',
+  steps:['Open the room on this device and allow camera & mic','Share the link or QR with the customer to join','Talk face to face in a live Vonage video room'],
+  payloadNote:'Live on the Vonage Video API (HTTPS required for camera).'},
+
+ {id:'insight-lookup',cat:'insight',api:'Number Insight API',ic:'signal',title:'Number Insight Lookup',customer:'Onboarding & risk teams',mock:false,run:'insight',
+  blurb:'Instantly learn the carrier, country, line type and reachability of any phone number.',
+  useCase:'Before you message or call, Number Insight tells you if a number is valid, its country and carrier, whether it’s mobile or landline, and if it’s currently reachable - cleaning lists, cutting costs and flagging risky numbers at sign-up.',
+  steps:['Enter any phone number in international format','We run a live Number Insight lookup','See the carrier, country, line type and validity returned'],
+  payloadNote:'Live lookup via the Vonage Number Insight API.'},
+
+ /* ---- MOCK: Network APIs (visual simulators) ---- */
+ {id:'sim-swap',cat:'network',api:'SIM Swap \u00b7 Identity Insights',ic:'sim',title:'SIM Swap Detection',customer:'Banks & fintech (fraud)',mock:true,run:'mock',
+  blurb:'Check whether a SIM was recently swapped - a classic account-takeover signal - before you approve a transfer.',
+  useCase:'Fraudsters port a victim\u2019s number to a new SIM to intercept OTPs, then drain the account. The SIM Swap insight (Identity Insights API) asks the mobile operator in real time: \u201cwas this SIM changed recently?\u201d A fresh swap means hold the transfer or step up auth. Live with all major US, UK and EU carriers.',
+  steps:['Press \u201cTransfer\u201d on the simulated banking app - or force the failure path','Follow the hops: app \u2192 bank risk engine \u2192 Vonage \u2192 carrier SIM registry','Success: the transfer sends. Failure: it is held and step-up auth kicks in','Open \u201cView the API payload\u201d for the exact request & response'],
+  sim:{app:{brand:'VonaBank',logo:'\ud83c\udfe6',theme:'#0e2a47',screen:'transfer',cta:'Transfer \u00a32,400',amount:'\u00a32,400.00',sub:'To J. Smith \u00b7 04-00-04 31114411'},
+   hops:[{ic:'\ud83d\udcf1',name:'VonaBank app',sub:'customer device',detail:'User confirms a \u00a32,400 transfer'},
+         {ic:'\ud83d\udda5',name:'Bank risk engine',sub:'pre-transaction checks',detail:'High-value transfer \u2192 request a SIM-swap signal'},
+         {ic:'V',name:'Vonage',sub:'Identity Insights API',detail:'POST /v1/identity-insights \u00b7 insights: sim_swap'},
+         {ic:'\ud83d\udce1',name:'Carrier',sub:'SIM registry \u00b7 EE',detail:'When did this SIM last change?'}],
+   ok:{t:'Transfer sent',s:'\u00a32,400 is on its way to J. Smith'},bad:{t:'Transfer held',s:'SIM changed 4h ago - step-up verification required'},visual:'unlock'},
+  gen:n=>{const swapped=Math.random()<.5;return {endpoint:'POST /v1/identity-insights',request:{phone_number:n,insights:['sim_swap'],max_age_hours:240},response:{sim_swap:{swapped,...(swapped?{latest_sim_change:'2026-07-06T04:12:09Z'}:{})}},verdict:swapped?['bad','SIM swapped hours ago - transfer held, step-up auth']:['ok','No recent SIM change - transfer approved']};}},
+
+ {id:'silent-auth',cat:'network',api:'Verify API \u00b7 Silent Authentication',ic:'fp',title:'Silent Authentication Login',customer:'Passwordless login',mock:true,run:'mock',
+  blurb:'Log a user in by verifying phone possession through the carrier - no password, no OTP, nothing to type.',
+  useCase:'Silent Authentication (a Verify API channel, built on the carrier number-verification standard) confirms the phone really owns its number over the mobile-data connection, invisibly. The user taps Continue and they are in - no code to intercept, no friction to abandon. On failure the same workflow falls back to an SMS code automatically. GA across US, UK, France, Germany, Italy, Spain, Netherlands and Canada.',
+  steps:['Tap \u201cContinue with phone\u201d on the simulated app - or force the failure path','A background mobile-data session opens - nothing visible to the user','The carrier cryptographically confirms the device owns the number','On failure, watch the workflow fall back to an SMS OTP on the phone'],
+  sim:{app:{brand:'Demo App',logo:'\u25c6',theme:'#111116',screen:'login',cta:'Continue with phone',sub:'Sign in \u00b7 no password needed'},
+   hops:[{ic:'\ud83d\udcf1',name:'Demo App',sub:'customer device',detail:'User taps \u201cContinue with phone\u201d'},
+         {ic:'\ud83d\udda5',name:'App backend',sub:'auth service',detail:'Starts a Verify workflow \u00b7 channel: silent_auth'},
+         {ic:'V',name:'Vonage Verify',sub:'Silent Authentication',detail:'POST /v2/verify \u00b7 workflow: silent_auth'},
+         {ic:'\ud83d\udce1',name:'Carrier',sub:'mobile data session',detail:'Cryptographic check: does this device own the number?'}],
+   ok:{t:'Signed in',s:'Verified by your carrier - nothing typed'},bad:{t:'Silent check failed',s:'Falling back to SMS - enter the code we sent',otp:true},visual:'unlock'},
+  gen:n=>{const ok=Math.random()<.85;return {endpoint:'POST /v2/verify (channel: silent_auth)',request:{brand:'Demo App',workflow:[{channel:'silent_auth',to:n},{channel:'sms',to:n}]},response:ok?{request_id:'d0f2\u2026',status:'completed',authenticated:true}:{status:'failed',reason:'device_network_mismatch',fallback:'sms'},verdict:ok?['ok','Authenticated silently via the carrier']:['bad','Silent check failed - fell back to SMS OTP']};}},
+
+ {id:'device-swap',cat:'network',api:'Device Swap \u00b7 Identity Insights',ic:'sim',title:'Device Swap Detection',customer:'Account security',mock:true,run:'mock',
+  blurb:'Spot when a number suddenly lives in a new handset - the quiet cousin of SIM-swap fraud.',
+  useCase:'A SIM moving into a new device is normal once a year - and very suspicious minutes before a password reset. The Device Swap insight (Identity Insights API) asks the carrier when this SIM last changed handsets, so a brand-new device triggers step-up authentication instead of a silent takeover.',
+  steps:['Tap \u201cReset password\u201d on the simulated app - or force the failure path','Vonage asks the carrier when the SIM last changed devices','A device changed hours ago = challenge; a familiar device = proceed','Open the payload to see the device_swap insight response'],
+  sim:{app:{brand:'Demo App',logo:'\u25c6',theme:'#111116',screen:'reset',cta:'Reset password',sub:'Account \u00b7 Security settings'},
+   hops:[{ic:'\ud83d\udcf1',name:'Demo App',sub:'customer device',detail:'Password reset requested'},
+         {ic:'\ud83d\udda5',name:'App backend',sub:'account security',detail:'Sensitive action \u2192 request a device-swap signal'},
+         {ic:'V',name:'Vonage',sub:'Identity Insights API',detail:'POST /v1/identity-insights \u00b7 insights: device_swap'},
+         {ic:'\ud83d\udce1',name:'Carrier',sub:'device registry',detail:'When did this SIM last change handsets?'}],
+   ok:{t:'Reset link sent',s:'Same trusted handset - low risk'},bad:{t:'New device detected',s:'Handset changed 10h ago - extra verification required'},visual:'unlock'},
+  gen:n=>{const sw=Math.random()<.4;return {endpoint:'POST /v1/identity-insights',request:{phone_number:n,insights:['device_swap'],max_age_hours:72},response:{device_swap:{swapped:sw,...(sw?{last_swap:'2026-07-06T01:41:00Z'}:{})}},verdict:sw?['bad','Device changed 10h ago - challenge the reset']:['ok','Same trusted handset - reset allowed']};}},
+
+ {id:'device-location',cat:'network',api:'Device Location Retrieval API',ic:'pin',title:'Device Location Retrieval',customer:'Logistics & lone workers',mock:true,run:'mock',
+  blurb:'Ask the network where a SIM device last was - no GPS, no app installed, works on any phone or tracker.',
+  useCase:'The Device Location Retrieval API returns the last known network location of a SIM-enabled device - phones, trackers, IoT sensors - with no app and no GPS drain. Fleets locate vehicles, employers check in on lone workers, and fraud teams verify where a device really was.',
+  steps:['Press \u201cLocate van\u201d on the simulated dispatch app - or force the failure path','The carrier looks up which cells the device is using','A map pin drops with the position and its accuracy radius','Open the payload for the CAMARA-style location response'],
+  sim:{app:{brand:'FleetTrack',logo:'\ud83d\ude9a',theme:'#173325',screen:'status',cta:'Locate van 214',sub:'Van 214 \u00b7 last seen 09:20',lines:['Driver: M. Okafor','Route: N7 \u00b7 12 drops left']},
+   hops:[{ic:'\ud83d\udda5',name:'Dispatch console',sub:'FleetTrack ops',detail:'Where is van 214 right now?'},
+         {ic:'V',name:'Vonage',sub:'Device Location Retrieval',detail:'POST /camara/location-retrieval \u00b7 maxAge 600s'},
+         {ic:'\ud83d\udce1',name:'Carrier',sub:'cell network',detail:'Position from serving cells - no GPS involved'}],
+   ok:{t:'Van located',s:'Central London \u00b7 \u00b1800 m'},bad:{t:'Unreachable',s:'Device offline - showing last known position'},visual:'mapfind'},
+  gen:n=>{const ok=Math.random()<.85;return {endpoint:'POST /camara/location-retrieval/v0/retrieve',request:{device:{phoneNumber:n},maxAge:600},response:ok?{area:{areaType:'CIRCLE',center:{latitude:51.5072,longitude:-0.1276},radius:800},lastLocationTime:'2026-07-06T09:20:11Z'}:{status:404,code:'LOCATION_UNAVAILABLE'},verdict:ok?['ok','Device located - central London, \u00b1800 m']:['bad','Location unavailable - device offline']};}},
+
+ {id:'location-verify',cat:'network',api:'Location Verification \u00b7 Identity Insights',ic:'target',title:'Location Verification (Geofence)',customer:'Payments & compliance',mock:true,run:'mock',
+  blurb:'Confirm the device is inside an expected area at the moment of a payment - a privacy-friendly true/false.',
+  useCase:'A card payment says London - is the phone actually there? The Location Verification insight asks the network whether the device is inside a given circle and returns only true or false: strong fraud signal, no tracking, no GPS permission. Also used for gambling and trading geo-compliance.',
+  steps:['Press \u201cPay\u201d on the simulated checkout - or force the failure path','The network checks the device against the expected area','Inside the geofence: payment approved. Outside: flagged for review','The map shows the geofence and where the device answered from'],
+  sim:{app:{brand:'AURELIA',logo:'A',theme:'#B5563A',screen:'checkout',cta:'Pay \u00a3129',amount:'\u00a3129.00',sub:'Odette Slip Dress \u00b7 London boutique'},
+   hops:[{ic:'\ud83d\udcf1',name:'AURELIA checkout',sub:'customer device',detail:'Card payment initiated in London'},
+         {ic:'\ud83d\udda5',name:'Payment risk',sub:'fraud rules',detail:'Location claim \u2192 verify against the network'},
+         {ic:'V',name:'Vonage',sub:'Location Verification',detail:'POST /camara/location-verification \u00b7 CIRCLE r=2km'},
+         {ic:'\ud83d\udce1',name:'Carrier',sub:'network position',detail:'Inside the area? Only true/false leaves the network'}],
+   ok:{t:'Payment approved',s:'Device confirmed inside the London geofence'},bad:{t:'Payment flagged',s:'Device answered outside the expected area'},visual:'map'},
+  gen:n=>{const match=Math.random()<.7;return {endpoint:'POST /camara/location-verification/v1/verify',request:{device:{phoneNumber:n},area:{areaType:'CIRCLE',center:{latitude:51.5074,longitude:-0.1278},radius:2000}},response:{verificationResult:match?'TRUE':'FALSE',lastLocationTime:'2026-07-06T09:20:11Z'},verdict:match?['ok','Device inside the area - payment approved']:['bad','Location mismatch - transaction flagged']};}},
+
+ {id:'device-status',cat:'network',api:'Reachability & Roaming \u00b7 Identity Insights',ic:'wave',title:'Reachability & Roaming Check',customer:'Logistics & comms',mock:true,run:'mock',
+  blurb:'Know if a device is connected right now and whether it is roaming - before you spend on a message or call.',
+  useCase:'The Reachability and Roaming insights (Identity Insights API) report whether a device is currently connected and whether it is abroad. Skip sends to dead numbers, time deliveries for when drivers are reachable, and adapt pricing or content for roaming customers.',
+  steps:['Press \u201cCheck driver\u201d on the simulated app - or force the failure path','The carrier pings the device\u2019s live network registration','Status chips light up: connected, roaming, country','Use it to gate expensive sends or reroute to another channel'],
+  sim:{app:{brand:'Parcelo',logo:'\ud83d\udce6',theme:'#1d2433',screen:'status',cta:'Check driver',sub:'Delivery #8841 \u00b7 out for delivery',lines:['Driver: S. Reyes','ETA window: 12:30-13:00']},
+   hops:[{ic:'\ud83d\udda5',name:'Parcelo platform',sub:'delivery ops',detail:'Is the driver\u2019s device reachable for the call?'},
+         {ic:'V',name:'Vonage',sub:'Identity Insights API',detail:'POST /v1/identity-insights \u00b7 reachability, roaming'},
+         {ic:'\ud83d\udce1',name:'Carrier',sub:'network registration',detail:'Live connectivity + roaming state'}],
+   ok:{t:'Driver reachable',s:'Connected - safe to place the call'},bad:{t:'Not connected',s:'Device off-network - delay the send'},visual:'radar'},
+  gen:n=>{const reach=Math.random()<.85,roam=Math.random()<.3;return {endpoint:'POST /v1/identity-insights',request:{phone_number:n,insights:['reachability','roaming']},response:{reachability:reach?'CONNECTED':'NOT_CONNECTED',roaming:{roaming:roam,...(roam?{country:'ES'}:{})}},verdict:reach?['ok',roam?'Reachable - roaming in Spain':'Reachable on home network']:['bad','Not connected - delay the send']};}},
+
+ {id:'qod',cat:'network',api:'Quality on Demand API',ic:'signal',title:'Quality on Demand Boost',customer:'Live video & broadcast',mock:true,run:'mock',
+  blurb:'Request a low-latency, high-throughput network slice on demand - then watch the stream quality jump.',
+  useCase:'The Quality on Demand API lets an app ask the mobile network for a temporary performance boost - guaranteed latency and bandwidth for a live broadcast, remote inspection or cloud game - then release it. Programmable network quality, per session, straight from the CAMARA standard.',
+  steps:['Press \u201cGo live\u201d on the simulated stream - or force the failure path','The app requests a low-latency QoD session from the network','Slice granted: the bars jump and latency drops to 18 ms','On failure the stream degrades gracefully on the standard network'],
+  sim:{app:{brand:'Live Broadcast',logo:'\u25b6',theme:'#3a0d0d',screen:'stream',cta:'Go live',sub:'Camera 1 \u00b7 1080p \u00b7 stadium uplink'},
+   hops:[{ic:'\ud83d\udcf1',name:'Streaming app',sub:'broadcast device',detail:'Going live - needs guaranteed uplink'},
+         {ic:'V',name:'Vonage',sub:'Quality on Demand',detail:'POST /camara/quality-on-demand \u00b7 QOS_L_LOW_LATENCY'},
+         {ic:'\ud83d\udce1',name:'Network',sub:'slice controller',detail:'Reserve latency + bandwidth for this device'}],
+   ok:{t:'Boost active',s:'Low-latency slice granted for 60 min'},bad:{t:'Boost unavailable',s:'Network congestion - streaming on standard quality'},visual:'bars'},
+  gen:n=>{const ok=Math.random()<.85;return {endpoint:'POST /camara/quality-on-demand/v1/sessions',request:{device:{phoneNumber:n},qosProfile:'QOS_L_LOW_LATENCY',duration:3600},response:ok?{sessionId:'qod_9f2a41c8',qosStatus:'AVAILABLE',expiresAt:'2026-07-06T11:00:00Z'}:{qosStatus:'UNAVAILABLE',reason:'network_congestion'},verdict:ok?['ok','Low-latency slice granted for 60 min']:['bad','Boost unavailable - degrade gracefully']};}},
+
+ /* ---- MOCK: Identity ---- */
+ {id:'identity-insights',cat:'identity',api:'Identity Insights API',ic:'fp',title:'Identity Insights \u00b7 One Call, Every Signal',customer:'Onboarding & risk teams',mock:true,run:'mock',
+  blurb:'One request returns format, carrier, line type, reachability and SIM-swap recency - the full picture of a number.',
+  useCase:'The Identity Insights API bundles the carrier and device signals - number format, current carrier, line type, roaming, reachability, SIM swap, device swap, subscriber match - into one request. At sign-up it separates real customers from synthetic identities; before a send it picks the right channel.',
+  steps:['Press \u201cCreate account\u201d on the simulated sign-up - or force the failure path','One Identity Insights call fans out across the carrier signals','Each signal flips green (or red) as the carrier answers','The combined picture drives fast-track vs step-up onboarding'],
+  sim:{app:{brand:'Demo App',logo:'\u25c6',theme:'#111116',screen:'signup',cta:'Create account',sub:'New account \u00b7 step 2 of 2',fields:['Alex Morgan','+44 7700 900123']},
+   hops:[{ic:'\ud83d\udcf1',name:'Sign-up form',sub:'customer device',detail:'New account submitted'},
+         {ic:'V',name:'Vonage',sub:'Identity Insights API',detail:'POST /v1/identity-insights \u00b7 format, carrier, reachability, sim_swap'},
+         {ic:'\ud83d\udce1',name:'Carrier',sub:'data sources',detail:'Signals stream back one by one'}],
+   ok:{t:'Account created',s:'All signals clean - fast-tracked'},bad:{t:'Step-up required',s:'Weak signals - extra verification requested'},visual:'fields',fields:['Format valid','Line type: mobile','Current carrier: EE','Reachable now','SIM swap (7 days)']},
+  gen:n=>{const good=Math.random()<.7;return {endpoint:'POST /v1/identity-insights',request:{phone_number:n,insights:['format','carrier','reachability','sim_swap']},response:{format:{valid:true,e164:n},current_carrier:{name:'EE',type:'mobile'},reachability:good?'CONNECTED':'NOT_CONNECTED',sim_swap:{swapped:!good}},verdict:good?['ok','All signals clean - fast-track this user']:['bad','Weak signals - step up verification']};}},
+
+ {id:'fraud-defender',cat:'identity',api:'Fraud Defender',ic:'shield',title:'Fraud Defender \u00b7 Risk Scoring',customer:'Anti-fraud teams',mock:true,run:'mock',
+  blurb:'Real-time risk scoring on messaging traffic to block SMS pumping (AIT) and OTP fraud before it bills you.',
+  useCase:'Fraud Defender scores every messaging transaction in real time against live fraud models - artificially-inflated traffic, suspicious velocity, high-risk ranges - and blocks the bad ones before they land. It is how Vonage customers protect their OTP spend at scale.',
+  steps:['Press \u201cRequest OTP\u201d - or force the failure path to see a block','The request is scored against live AIT and velocity models','The gauge sweeps to the risk score with reason codes','High risk is blocked in-line; clean traffic flows untouched'],
+  sim:{app:{brand:'OTP Guard',logo:'\ud83d\udee1',theme:'#101728',screen:'status',cta:'Request OTP',sub:'Login OTP \u00b7 your platform',lines:['Destination: +44 7700 900\u2026','Route: UK \u00b7 tier 1']},
+   hops:[{ic:'\ud83d\udda5',name:'Your platform',sub:'OTP sender',detail:'OTP requested for a new login'},
+         {ic:'V',name:'Fraud Defender',sub:'in-line scoring',detail:'POST /fraud-defender/v1/assess \u00b7 event: otp_request'},
+         {ic:'\ud83e\udde0',name:'Fraud models',sub:'live traffic intel',detail:'AIT patterns \u00b7 velocity \u00b7 range reputation'}],
+   ok:{t:'OTP sent',s:'Clean traffic - delivered normally'},bad:{t:'Blocked',s:'AIT suspected - OTP never sent, money saved'},visual:'gauge'},
+  gen:n=>{const risk=Math.floor(Math.random()*100);const bad=risk>=65;return {endpoint:'POST /fraud-defender/v1/assess',request:{phoneNumber:n,event:'otp_request'},response:{riskScore:risk,band:bad?'HIGH':'LOW',reasons:bad?['unusual_velocity','high_risk_range']:['known_good','stable_number'],recommendation:bad?'BLOCK':'ALLOW'},verdict:bad?['bad','Risk '+risk+' - blocked (likely AIT/pumping)']:['ok','Risk '+risk+' - allowed']};}},
+
+ {id:'kyc-match',cat:'identity',api:'Subscriber Match \u00b7 Identity Insights',ic:'shield',title:'Subscriber Match (KYC)',customer:'Onboarding & compliance',mock:true,run:'mock',
+  blurb:'Silently confirm the name and details a user typed match what their mobile operator has on file.',
+  useCase:'Subscriber Match (an Identity Insights beta) compares the details a user enters at onboarding - name, date of birth, address - against the verified account-holder record their mobile operator holds. Mismatches and synthetic identities surface in one call, with no documents and no friction.',
+  steps:['Press \u201cVerify my details\u201d on the simulated form - or force the failure path','Vonage matches each field against the operator\u2019s account record','Name, DOB and address flip green or red one by one','Match scores drive auto-approve vs manual review'],
+  sim:{app:{brand:'Demo Bank',logo:'\ud83c\udfe6',theme:'#0e2a47',screen:'signup',cta:'Verify my details',sub:'KYC \u00b7 step 3 of 3',fields:['Alex Morgan','18/04/1992 \u00b7 SW1A 1AA']},
+   hops:[{ic:'\ud83d\udcf1',name:'Onboarding form',sub:'customer device',detail:'Typed details submitted for matching'},
+         {ic:'V',name:'Vonage',sub:'Subscriber Match',detail:'POST /v1/identity-insights \u00b7 insights: subscriber_match'},
+         {ic:'\ud83d\udce1',name:'Operator KYC',sub:'account-holder record',detail:'Field-by-field match, only scores leave the operator'}],
+   ok:{t:'Identity confirmed',s:'Details match the operator record'},bad:{t:'Manual review',s:'Details do not match the operator record'},visual:'fields',fields:['Name','Date of birth','Address']},
+  gen:n=>{const good=Math.random()<.75;return {endpoint:'POST /v1/identity-insights',request:{phone_number:n,insights:['subscriber_match'],given_name:'Alex',family_name:'Morgan',birthdate:'1992-04-18'},response:{subscriber_match:{name_match:good?'MATCH':'PARTIAL',birthdate_match:good,address_match:good,score:good?96:54}},verdict:good?['ok','Details match the operator record (96)']:['bad','Mismatch (54) - route to manual review']};}},
+
+ {id:'android-app',cat:'internal',api:'Android · Vonage in-app',ic:'phone',title:'Vonage Demo-World Android App',customer:'The field team',mock:false,run:'android',
+  blurb:'A native, Vonage-branded Android app - install the APK and run the live demos, including in-app video, from a real phone.',
+  useCase:'Vonage APIs run natively inside mobile apps. This is a real, Vonage-branded Android app that carries the whole Demo-World inside it - so you can show prospects the live demos, including camera-based Vonage Video, from an installed app, not just a browser. It is signed, installable, and about 3 MB.',
+  steps:['Download the APK or scan the code on an Android phone','Open it and allow install from unknown sources if prompted','Launch Vonage Demo-World and run any demo - the video demo uses the phone camera'],
+  payloadNote:'Native Android app (Android 8.0+), Vonage-branded, camera & mic wired for the Video demo.'}
+];
+
+/* ---- CUSTOMER STORIES (real Vonage customers - vonage.com/resources/customers) ----
+   Not part of the demo grid; only shown in the Customer Stories section. */
+const LOGOS='https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logos/';
+const STORYIMG='https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/story/';
+const STORIES=[
+ {id:'freenow',company:'FREENOW by Lyft',industry:'Mobility · 180 cities, 9 countries',color:'#e50040',
+  headline:'Rides customers trust, right in the message thread',
+  blurb:'Europe\'s leading multi-mobility app moved ride confirmations to branded RCS - and hit a 100% conversion rate on RCS-ready devices.',
+  metrics:['100% conversion on RCS','Faster than SMS & WhatsApp'],
+  products:['Messages API · RCS','SMS + WhatsApp failover','Number Verification','Fraud Defender'],
+  who:'FREENOW by Lyft is Europe\'s leading multi-mobility app - taxis, car-sharing, eScooters and eBikes for millions of users across 180 cities in nine countries.',
+  challenge:'Millions of riders rely on messages for ride confirmations, receipts and updates - but plain SMS looked nothing like the polished FREENOW app, and rising fraud made customers wary of unbranded texts. A missed or mistrusted message directly hurt the ride experience.',
+  solution:'With the Vonage Messages API, FREENOW sends fully branded RCS messages - logo, colours, driver details, live trip info and tappable actions - with automatic fallback to WhatsApp and SMS so every device is reached. Vonage Number Verification and Fraud Defender protect logins and keep fraudulent messages out.',
+  results:[{n:'100%',t:'conversion rate on RCS-ready devices'},{n:'#1',t:'RCS beats SMS & WhatsApp on delivery speed & logins'},{n:'↑',t:'higher click-through & OTP conversion rates'}],
+  quote:{t:'Vonage\'s APIs provide us with the flexibility and reliability to meet the demands of millions of users across Europe - branded, interactive experiences that inspire confidence.',w:'Tim Ossenfort, VP of Engineering, FREENOW by Lyft'},
+  src:'https://www.vonage.com/resources/articles/use-rcs-transform-customer-engagement/',
+  run:{kind:'send',demo:'story-freenow',btn:'Send the FREENOW ride card',sub:'Sends the branded ride-confirmation RCS card to your phone - the same production pattern FREENOW runs today.'}},
+
+ {id:'telljo',company:'TellJO',industry:'Financial wellbeing · UK utilities & debt purchasers',color:'#128d94',
+  headline:'Turning trust into action with verified RCS',
+  blurb:'Wellbeing checks for vulnerable customers looked like phishing over SMS. Verified, branded RCS lifted engagement 40%.',
+  metrics:['+40% engagement','Verified sender trust'],
+  products:['Messages API','RCS Business Messaging','SMS'],
+  who:'TellJO helps utilities, water companies and debt purchasers support customers who are struggling financially - digital wellbeing checks that spot vulnerability before it becomes crisis, with a "communicate with kindness" philosophy.',
+  challenge:'Reaching vulnerable people with unbranded SMS looked like a scam. Customers are told never to click unknown links - so wellbeing checks went unread, and a helpful check-in was indistinguishable from a demand for payment. Engagement stayed low; people who needed support never saw it.',
+  solution:'Vonage introduced TellJO to RCS Business Messaging: verified sender, company logo and interactive options in one thread. Instead of a single suspicious link, customers choose between a wellbeing check, an affordability assessment or a callback - legitimacy they can see, kindness they can act on.',
+  results:[{n:'+40%',t:'increase in user engagement'},{n:'✓',t:'verified branding overcame phishing fear'},{n:'↓',t:'fewer costly debt write-offs for corporate clients'}],
+  quote:{t:'The move to a verified, branded and interactive messaging format resulted in a 40% increase in engagement rates - enabling us to deliver genuine support to those who need it most.',w:'Dominic Maxwell, Founder, TellJO'},
+  src:'https://www.vonage.com/resources/customers/telljo/',
+  run:{kind:'send',demo:'story-telljo',btn:'Send the wellbeing check-in',sub:'Sends the TellJO-style verified RCS wellbeing card with three support options - the exact pattern from the story.'}},
+
+ {id:'mydealz',company:'mydealz',industry:'Social commerce · Germany\'s largest deal community',color:'#1d3480',
+  headline:'First-in-region RCS deal alerts that convert',
+  blurb:'Germany\'s largest shopping community became the first in its region to run RCS marketing - deals with photos, prices and buttons, straight in the inbox.',
+  metrics:['1st RCS marketing in region','Higher response rates'],
+  products:['Messages API · RCS','Rich media & suggested actions'],
+  who:'mydealz runs Germany\'s largest social shopping community - millions of bargain hunters sharing and voting on deals across thousands of retailers.',
+  challenge:'Time-sensitive deals died in crowded inboxes. Static SMS couldn\'t show product images, prices or urgency - and by the time users opened a separate app, the deal was often gone.',
+  solution:'With Vonage, mydealz became the first company in its region to run RCS marketing: product photos, prices and retailer branding right in the notification, with "View deal" and "Save for later" buttons, personalised to each user\'s interests by AI-driven curation.',
+  results:[{n:'1st',t:'RCS marketing launch in the region'},{n:'↑',t:'higher response rates & deal discovery'},{n:'↑',t:'increased user retention'}],
+  quote:{t:'By integrating Vonage RCS, mydealz becomes the first in the region to bring this innovative channel to its marketing strategy, strengthening its competitive advantage.',w:'Alex Wagner, VP Marketing, mydealz'},
+  src:'https://www.vonage.com/resources/articles/use-rcs-transform-customer-engagement/',
+  run:{kind:'send',demo:'story-mydealz',btn:'Send the deal alert',sub:'Sends the mydealz-style RCS deal card - image, price and instant actions on your phone.'}},
+
+ {id:'instyler',company:'Instyler',industry:'SaaS for 1,500 beauty salons · DACH',color:'#009aa4',
+  headline:'250,000 reminders a month, actually delivered',
+  blurb:'Salon reminders kept going missing over SMS. One API call now tries WhatsApp, falls back to RCS, then SMS - automatically.',
+  metrics:['250k msgs/month','WhatsApp→RCS→SMS failover'],
+  products:['Messages API','Intelligent channel failover','Own Your Brand · WhatsApp'],
+  who:'Instyler is the booking backbone of nearly 1,500 salons across Germany, Austria and Switzerland - a million appointments managed and about 250,000 messages sent every month.',
+  challenge:'Unreliable SMS delivery meant customers missed appointment reminders, salons lost money on no-shows, and the support team drowned in "the message never arrived" tickets. Onboarding salons to third-party business messaging accounts was slow and painful.',
+  solution:'With the Vonage Messages API, one call now tries WhatsApp first, falls back to RCS if available, then SMS - no manual intervention. White-labeled WhatsApp onboarding ("Own Your Brand") gives every salon its own branded sender in minutes, and delivery became a non-issue.',
+  results:[{n:'250k',t:'messages a month, delivered reliably'},{n:'3-in-1',t:'WhatsApp → RCS → SMS intelligent failover'},{n:'↓',t:'delivery support tickets dropped dramatically'}],
+  quote:{t:'Vonage has been a game-changer for Instyler. We offer customers the flexibility to choose their preferred channels while ensuring every message gets delivered.',w:'Sebastian Brand, Owner, Instyler'},
+  src:'https://www.vonage.com/resources/customers/instyler/',
+  run:{kind:'failover',demo:'story-instyler',btn:'Run the failover reminder',sub:'Watch the channel cascade pick the best route, then receive the real salon reminder card on your phone.'}},
+
+ {id:'maxfactory',company:'Max Factory',industry:'Retail · 48 stores across Italy',color:'#e07f18',
+  headline:'From paper flyers to +100% active users',
+  blurb:'An Italian retail chain swapped paper flyers for personalised WhatsApp campaigns - and doubled its active user base in a year.',
+  metrics:['+100% active users','65% read rate'],
+  products:['Messages API · WhatsApp','Conversational Connect'],
+  who:'Max Factory is a leading Italian retail chain - 48 stores across seven regions selling apparel, homeware, toys and DIY - on a mission to blend physical stores with digital touchpoints.',
+  challenge:'Marketing ran on paper flyers: zero personalisation, no targeting by store, preference or behaviour, no measurable results - plus heavy print costs and environmental impact.',
+  solution:'The Vonage Messages API via WhatsApp plus Conversational Connect turned the flyer into a campaign engine: over 10,000 targeted WhatsApp messages a month, adapted in real time to each customer\'s preferences, location and purchase history, with live analytics on every send.',
+  results:[{n:'+100%',t:'active user base in one year'},{n:'65%',t:'read rate on campaigns'},{n:'10k+',t:'WhatsApp messages a month, near-perfect delivery'}],
+  quote:{t:'Not only did we increase our active user base by 100% in just one year, we also achieved a 65% read rate. Vonage enabled us to engage customers in ways we never thought possible.',w:'Giacomo Cinelli, Head of Marketing, Max Factory'},
+  src:'https://www.vonage.com/resources/customers/max-factory/',
+  run:{kind:'send',demo:'story-maxfactory',btn:'Send the personalised offer',sub:'Sends the Max Factory-style personalised store offer as a rich card (production runs on WhatsApp via the same Messages API).'}},
+
+ {id:'livestorm',company:'Livestorm',industry:'Webinar platform · global',color:'#10233f',
+  headline:'53% higher attendance on rock-solid video',
+  blurb:'After an unreliable open-source stack, Livestorm rebuilt on the Vonage Video API - and rode a 20x usage surge without breaking.',
+  metrics:['53% higher attendance','20x surge absorbed'],
+  products:['Video API','Voice API dial-in','Experience Composer'],
+  who:'Livestorm powers webinars for marketing teams worldwide. It has built on the Vonage Video API since 2016, scaling from startup to a trusted platform for global enterprises.',
+  challenge:'The original open-source WebRTC gateway was inflexible and unreliable - quality issues blocked the move upmarket to enterprise customers, and the team burned engineering time managing video infrastructure instead of building product.',
+  solution:'The Vonage Video API became Livestorm\'s foundation: reliable, global video with whiteboards and pre-recorded segments via Experience Composer, phone dial-in through the Voice API, and media zones plus encryption that unlocked enterprise deals.',
+  results:[{n:'53%',t:'higher attendance rates'},{n:'80%',t:'time savings for some customers'},{n:'20x',t:'usage surge absorbed without failure'}],
+  quote:{t:'The strength and stability of Vonage\'s platform was truly tested when we had a massive 20x increase in usage in just a few days.',w:'Robin Lambert, Co-founder & CPO, Livestorm'},
+  src:'https://www.vonage.com/resources/customers/livestorm/',
+  run:{kind:'video',btn:'Open the webinar lobby',sub:'A replica Livestorm lobby whose join button starts a real Vonage Video session - the same API Livestorm builds on.'}}
+];
+/* extra stories generated from vonage.com (see /demoworld-stories.js) */
+if(window.STORIES_EXT&&Array.isArray(window.STORIES_EXT))STORIES.push(...window.STORIES_EXT);
+
+/* ---- render ---- */
+let activeCat='all';
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function stats(){
+ const pure=DEMOS.filter(d=>d.cat!=='integrations'&&d.cat!=='internal');
+ const ops=pure.filter(d=>!d.mock).length,mk=pure.filter(d=>d.mock).length,cats=Object.keys(CATS).length;
+ document.getElementById('stats').innerHTML=
+  `<div class="stat"><b>${pure.length}</b><span>live demos</span></div>`+
+  `<div class="stat"><b>${ops}</b><span>operational</span></div>`+
+  `<div class="stat"><b>${cats}</b><span>API families</span></div>`;
+}
+function cats(){
+ const el=document.getElementById('catbar');
+ let h=`<div class="chip ${activeCat==='all'?'on':''}" onclick="setCat('all')">All demos</div>`;
+ for(const k in CATS)h+=`<div class="chip ${activeCat===k?'on':''}" onclick="setCat('${k}')"><span class="cdot" style="background:${CATS[k].color}"></span>${CATS[k].name}</div>`;
+ h+=`<div class="chip stch ${activeCat==='stories'?'on':''}" onclick="setCat('stories')">★ Customer stories</div>`;
+ el.innerHTML=h;
+}
+function setCat(c){activeCat=c;cats();render();}
+function gotoStories(){home();setCat('stories');document.querySelector('.catbar').scrollIntoView({behavior:'smooth'});}
+function renderStories(){
+ const q=(document.getElementById('q').value||'').toLowerCase().trim();
+ const list=STORIES.filter(s=>!q||(s.company+s.industry+s.headline+s.blurb+s.who+s.products.join(' ')).toLowerCase().includes(q));
+ document.getElementById('listtl').textContent='Customer stories';
+ document.getElementById('listcount').textContent=list.length+(list.length===1?' story':' stories')+' · real Vonage customers';
+ const g=document.getElementById('grid');
+ if(!list.length){g.innerHTML='<div class="empty">No stories match “'+esc(q)+'”.</div>';return;}
+ g.innerHTML=list.map(s=>`<div class="scard" onclick="openStory('${s.id}')">
+   <div class="stop" style="background:linear-gradient(150deg,${s.color},${shade(s.color)})">
+     <img class="slogo" src="${LOGOS+s.id}.png" alt="" onerror="logoErr(this,'${esc(s.company).replace(/'/g,'')}')">
+     <div class="sco"><b>${esc(s.company)}</b><span>${esc(s.industry)}</span></div></div>
+   <div class="sbody"><div class="shl">${esc(s.headline)}</div><div class="sbl">${esc(s.blurb)}</div>
+     <div class="smx">${s.metrics.map(m=>`<span>${esc(m)}</span>`).join('')}</div>
+     <div class="go" style="margin-top:14px">Read the story →</div></div></div>`).join('');
+}
+function logoErr(img,name){
+ if(!img.dataset.r){img.dataset.r='1';img.src=img.src.split('?')[0]+'?r='+Date.now();return;}
+ const d=document.createElement('div');d.className=img.className;
+ d.style.cssText='display:flex;align-items:center;justify-content:center;font-family:Space Grotesk;font-weight:700;font-size:22px;color:#0a0a0a;background:#fff';
+ d.textContent=(name||'?').trim()[0].toUpperCase();img.replaceWith(d);
+}
+async function dwLogout(){try{await fetch('/dw/api/logout',{method:'POST'});}catch(e){}location.reload();}
+/* owner-only Admin link - identity confirmed by the server; /dw/admin is also enforced server-side */
+fetch('/dw/api/me').then(r=>r.json()).then(me=>{
+ if(me&&me.ok&&me.email==='__ADMIN_EMAIL__'){
+  const a=document.createElement('a');a.className='nlink';a.textContent='Admin';a.href='/dw/admin';
+  const out=document.querySelector('.nav a[title="Sign out"]');
+  out?out.before(a):document.querySelector('.nav').appendChild(a);
+ }
+}).catch(()=>{});
+function shade(hex){
+ const n=parseInt(hex.slice(1),16);
+ const f=c=>Math.max(0,Math.round(c*0.62));
+ return '#'+[f(n>>16&255),f(n>>8&255),f(n&255)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function gotoInternal(){
+ home();setCat('internal');
+ document.querySelector('.catbar').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function render(){
+ if(activeCat==='stories'){renderStories();return;}
+ const q=(document.getElementById('q').value||'').toLowerCase().trim();
+ const list=DEMOS.filter(d=>(activeCat==='all'?(d.cat!=='integrations'&&d.cat!=='internal'):d.cat===activeCat)&&(!q||(d.title+d.api+d.customer+d.blurb+d.useCase).toLowerCase().includes(q)));
+ document.getElementById('listtl').textContent=activeCat==='all'?'All demos':CATS[activeCat].name;
+ document.getElementById('listcount').textContent=list.length+' demo'+(list.length!==1?'s':'');
+ const g=document.getElementById('grid');
+ if(!list.length){g.innerHTML='<div class="empty">No demos match “'+esc(q)+'”.</div>';return;}
+ g.innerHTML=list.map(d=>{const c=CATS[d.cat];return `<div class="demo" onclick="openDemo('${d.id}')">
+   <div class="top"><img src="${photoUrl(d)}" loading="lazy" alt="" onerror="this.onerror=null;this.src='${photoFallback(d)}'">
+     <div class="badge">${esc(c.name)}</div>${d.mock?'<div class="mockflag">SIMULATED</div>':''}</div>
+   <div class="b"><div class="api">${esc(d.api)}</div><h3>${esc(d.title)}</h3>
+     <div class="cust">${esc(d.customer)}</div><div class="bl">${esc(d.blurb)}</div>
+     <div class="go">Explore demo →</div></div></div>`;}).join('');
+}
+function home(){document.getElementById('ov').classList.remove('show');document.body.style.overflow='';window.scrollTo({top:0});}
+/* ---- detail ---- */
+function openDemo(id){
+ const d=DEMOS.find(x=>x.id===id);const c=CATS[d.cat];
+ const ov=document.getElementById('ov');
+ ov.innerHTML=`<div class="dh"><img class="dhimg" src="${photoUrl(d)}" alt="" onerror="this.onerror=null;this.src='${photoFallback(d)}'">
+   <div class="din"><button class="back" onclick="home()">← All demos</button>
+   <div class="tags"><span class="tag">${esc(d.api)}</span><span class="tag">${esc(c.name)}</span>${d.mock?'<span class="tag" style="background:#0d0d0dcc;color:#ffd27a">Simulated payload</span>':'<span class="tag" style="background:#0d0d0d;color:#86e090">● Live API</span>'}</div>
+   <h1>${esc(d.title)}</h1>
+   <div class="who">Use case by <b>${esc(d.customer)}</b></div></div></div>
+   <div class="dbody">
+     <div>
+       <div class="panel"><h4>The use case</h4><p>${esc(d.useCase)}</p></div>
+       <div class="panel" style="margin-top:18px"><h4>How to run it</h4><ol class="steps">${d.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+       <p style="margin-top:14px;font-size:12.5px;color:#8b8698">${esc(d.payloadNote||'')}</p></div>
+     </div>
+     <div class="runwrap"><div class="run" id="runpanel"></div></div>
+   </div>`;
+ buildRun(d);
+ ov.classList.add('show');document.body.style.overflow='hidden';ov.scrollTop=0;
+}
+function fmtJSON(o){
+ let s=JSON.stringify(o,null,2);
+ s=esc(s).replace(/&quot;([^&]+)&quot;:/g,'<span class="k">"$1"</span>:')
+   .replace(/: &quot;([^&]*)&quot;/g,': <span class="s">"$1"</span>')
+   .replace(/: (true|false)/g,': <span class="b">$1</span>')
+   .replace(/: (-?\d+\.?\d*)/g,': <span class="n">$1</span>');
+ return s;
+}
+function buildRun(d){
+ const p=document.getElementById('runpanel');
+ if(d.run==='install'){
+   const isHub=d.id==='hubspot-connector';
+   p.innerHTML=`<h4>One-click install</h4><div class="rsub">${isHub?'Install from the HubSpot marketplace, then connect your Vonage account on the Settings card.':'Install the managed package into any Salesforce org, then configure it from the setup page inside the CRM.'}</div>
+     <a class="rbtn full" style="display:block;text-align:center;margin-top:12px" href="${d.installUrl}" target="_blank">${isHub?'Open HubSpot install guide':'Install the package into Salesforce'}</a>
+     ${d.webInstallUrl?`<a class="rbtn full ghost" style="display:block;text-align:center;margin-top:8px" href="${d.webInstallUrl}" target="_blank">Or deploy via the web installer</a>`:''}
+     ${d.setupUrl?`<a class="rbtn full ghost" style="display:block;text-align:center;margin-top:8px" href="${d.setupUrl}" target="_blank">Open the setup page</a>`:''}
+     <div class="note">${isHub?'Each HubSpot portal connects its own Vonage account on the Settings card.':'A released unlocked package - installs the softphone, messaging, University objects &amp; routing. Then attach numbers to universities and assign agents; inbound routes by number automatically.'}</div>`;
+   return;
+ }
+ if(d.run==='tool'){
+   p.innerHTML=`<h4>Open the tool</h4><div class="rsub">Runs in your browser - nothing is sent or stored until you download the video yourself.</div>
+     <a class="rbtn full" style="display:block;text-align:center;margin-top:12px" href="${d.toolUrl}" target="_blank">Launch RCS Demo Video Maker</a>
+     <div class="note">Tip: have the client's icon (PNG) ready - it is the only upload. The AI writes the script and generates all card imagery.</div>`;
+   return;
+ }
+ if(d.run==='converse'){
+   const url='https://wa.me/'+WA+'?text='+encodeURIComponent(d.trigger);
+   p.innerHTML=`<h4>Run it on WhatsApp</h4><div class="rsub">Scan to open WhatsApp with the trigger word ready to send.</div>
+     <div class="trigpill">“${esc(d.trigger)}”</div>
+     <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}"></div>
+     <a class="rbtn full ghost" style="display:block;text-align:center;margin-top:12px" href="${url}" target="_blank">Open WhatsApp on this device</a>
+     <div class="note">The message goes to the live number <b>+${WA}</b> and the AI flow replies in seconds.</div>`;
+   return;
+ }
+ if(d.run==='mock'){
+   const s=d.sim||{};
+   p.innerHTML=`<h4>Watch it work</h4><div class="rsub">A simulated implementation on a real device - press the button in the app, or force the failure path, and follow the call hop by hop.</div>
+     <div class="field"><input id="mnum" placeholder="+44 7700 900123" value="+4477XXXXX${Math.floor(100+Math.random()*899)}"></div>
+     <div class="simstage">
+       <div class="dev"><div class="devscr"><div class="devnotch"></div><div class="devbar"><span>9:41</span><span>5G ▮▮▮▮ ▰</span></div><div class="devapp" id="devapp"></div></div><div class="devhome"></div></div>
+       <div class="rail" id="rail"></div>
+     </div>
+     <div class="simbtns"><button class="rbtn" id="mgo" onclick="runSim('${d.id}','ok')">▶ Success path</button><button class="rbtn danger" id="mbad" onclick="runSim('${d.id}','bad')">Force a failure</button></div>
+     <div class="simvis" id="simvis"></div><div class="rout" id="mout"></div>`;
+   devIdle(d);railBuild(d);
+   const mi=document.getElementById('mnum');
+   if(mi){const sync=()=>{const pm=document.getElementById('devnum');if(pm)pm.textContent=mi.value;};mi.addEventListener('input',sync);sync();}
+   return;
+ }
+ if(d.run==='verify'){
+   p.innerHTML=`<h4>Verify a number</h4><div class="rsub">Live two-factor flow over ${d.channel==='whatsapp'?'WhatsApp':'SMS'}.</div>
+     <div class="field"><input id="vnum" placeholder="+44 7…"><button class="rbtn" id="vsend" onclick="vStart('${d.id}','${d.channel}')">Send code</button></div>
+     <div id="vstage"></div><div class="rout" id="vout"></div>`;
+   return;
+ }
+ if(d.run==='call'){
+   p.innerHTML=`<h4>Get a live call</h4><div class="rsub">Vonage will call the number you enter and speak a message.</div>
+     <div class="field"><input id="cnum" placeholder="+44 7…"><button class="rbtn" id="cgo" onclick="doCall('${d.id}')">Call me</button></div>
+     <div class="rout" id="cout"></div>`;
+   return;
+ }
+ if(d.run==='android'){
+   const apk='https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/VonageDemoWorld.apk';
+   p.innerHTML=`<h4>Get the Android app</h4><div class="rsub">Install the Vonage-branded Demo-World app and run the live demos from your phone.</div>
+     <a class="rbtn full" style="display:block;text-align:center;margin-bottom:12px" href="${apk}">Download the APK (2.9 MB)</a>
+     <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(apk)}"></div>
+     <div class="note" style="margin-top:12px">1. Scan or download on an Android phone<br>2. Allow "install from unknown sources" if asked<br>3. Open Vonage Demo-World and run any demo - the video demo uses your camera.</div>`;
+   return;
+ }
+ if(d.run==='video'){
+   const room='dw'+Math.random().toString(36).slice(2,8);
+   const vbase=(location.protocol==='https:')?location.origin:location.origin+'';
+   const host=vbase+'/demoworld-video.html?room='+room;
+   p.innerHTML=`<h4>Start a live video room</h4><div class="rsub">Open the room here, then scan the code from another device - you'll both be in one live Vonage video session. Camera needs HTTPS.</div>
+     <a class="rbtn full" style="display:block;text-align:center;margin-bottom:12px" href="${host}" target="_blank">Open the video room</a>
+     <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(host)}"></div>
+     <div class="note">One room, two devices, real Vonage Video API. Allow camera & microphone when prompted.</div>`;
+   return;
+ }
+ if(d.run==='webcall'){
+   const wbase=(location.protocol==='https:')?location.origin:location.origin+'';
+   const host=wbase+'/demoworld-webcall.html';
+   p.innerHTML=`<h4>Call from the browser</h4><div class="rsub">Your laptop mic becomes the handset - type a number and talk, no phone needed.</div>
+     <div class="prereq"><b>Before you demo:</b> open the dialer on a laptop (the mic needs a secure HTTPS page - this button uses it), allow the microphone when the browser asks, and keep a real phone nearby to answer.</div>
+     <a class="rbtn full" style="display:block;text-align:center;margin-bottom:12px" href="${host}" target="_blank">Launch the web dialer</a>
+     <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(host)}"></div>
+     <ol class="steplist"><li>Launch the dialer and allow the microphone</li><li>Dial out: type any real number and press call</li><li>Dial in: ring <b>+44 7441 445920</b> from your phone - the page shows an incoming call, press answer</li><li>Talk both ways - browser mic and speakers, real phone on the other side</li></ol>
+     <div class="note">Real WebRTC over the Vonage Client SDK, bridged to the phone network. No dialer app or SIM involved.</div>`;
+   return;
+ }
+ if(d.run==='wacall'){
+   const walink='https://wa.me/'+WA+'?text='+encodeURIComponent('Hi, I want the WhatsApp calling demo');
+   p.innerHTML=`<h4>Ring a number on WhatsApp</h4><div class="rsub">WhatsApp Business Calling (Alpha): ask permission once, then place real voice calls inside WhatsApp.</div>
+     <div class="prereq"><b>How it works:</b> WhatsApp only rings a customer if they allowed calls from the business. If they never chatted with the line, have them scan the QR and send any message first (opens the 24h window for the permission request).</div>
+     <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(walink)}"></div>
+     <div class="rsub" style="text-align:center;margin:10px 0 2px">Scan to open a chat with <b>+${WA}</b></div>
+     <div class="field"><input id="wnum" placeholder="447… (country code, no +)" inputmode="numeric"></div>
+     <div style="display:flex;gap:10px;margin-top:2px">
+       <button class="rbtn" style="flex:1" id="wperm" onclick="doWaPerm()">1 · Ask permission</button>
+       <button class="rbtn" style="flex:1" id="wgo" onclick="doWaCall('${d.id}')">2 · Call on WhatsApp</button>
+     </div>
+     <div class="rout" id="wout"></div>
+     <ol class="steplist"><li>Enter the customer's WhatsApp number (447… format)</li><li>Press "Ask permission" - they get an in-chat prompt to allow calls</li><li>Once they tap Allow, press "Call on WhatsApp"</li><li>Their WhatsApp rings with the business name - they answer in-app</li></ol>
+     <div class="note">Live WhatsApp Business Calling (Alpha) via the Vonage Voice API - permission request + branded in-app voice call.</div>`;
+   return;
+ }
+ if(d.run==='insight'){
+   p.innerHTML=`<h4>Look up a number</h4><div class="rsub">Live carrier / line-type intelligence.</div>
+     <div class="field"><input id="inum" placeholder="+44 7…"><button class="rbtn" id="igo" onclick="doInsight('${d.id}')">Look up</button></div>
+     <div class="rout" id="iout"></div>`;
+   return;
+ }
+ /* receive */
+ const chLabel={rcs:'RCS',whatsapp:'WhatsApp',sms:'SMS'}[d.channel];
+ // sms: deep link with the agent's service address on @rbm.goog (NOT
+ // rbm.goo.gl - the wrong domain gives an unresolved, unbranded thread).
+ // Opens the agent conversation with the trigger word PRE-FILLED, ready to send.
+ const RBM_LINK=d.agentTrigger?('sms:__RBM_AGENT__@rbm.goog?body='+encodeURIComponent(d.agentTrigger)):'';
+ const agentQr=(d.channel==='rcs'&&d.agentTrigger)?`
+   <div class="rsub" style="margin-top:16px">…or scan to open the <b>VonageTestUK</b> agent with the trigger word pre-filled - just hit send:</div>
+   <div class="trigpill">“${esc(d.agentTrigger)}”</div>
+   <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(RBM_LINK)}"></div>
+   <a class="rbtn full ghost" style="display:block;text-align:center;margin-top:10px" href="${RBM_LINK}">Open the agent on this device</a>`:'';
+ p.innerHTML=`<h4>Send it to a phone</h4><div class="rsub">We’ll send this live ${chLabel} demo to the number you enter.</div>
+   <div class="field"><input id="snum" placeholder="+44 7…"><button class="rbtn" id="sgo" onclick="doSend('${d.id}','${d.channel}')">Send ${chLabel}</button></div>
+   ${d.channel==='rcs'?`<div class="note">Sent from <b>VonageTestUK</b> - a fully launched, verified RCS agent, so it reaches any RCS-enabled phone.</div>`:''}
+   ${agentQr}
+   <div class="rout" id="sout"></div>`;
+}
+async function addTester(inputId,outId){
+ const n=(document.getElementById(inputId).value||'').replace(/\D/g,'');
+ const o=document.getElementById(outId);
+ if(n.length<9){o.innerHTML='<div class="pill-bad" style="margin-top:8px">! Enter the full number first</div>';return;}
+ o.innerHTML='<div style="margin-top:8px;color:#b9b9c2;font-size:12.5px"><span class="spin"></span>Sending the tester invite…</div>';
+ const r=await api('/dw/api/rcs/testers',{phone:n});
+ o.innerHTML=r.ok?'<div class="pill-ok" style="margin-top:8px">✓ Invite sent - accept it in Google Messages on that phone, then send the demo</div>'
+  :'<div class="pill-bad" style="margin-top:8px">! '+esc(r.error||'Could not add tester')+'</div>';
+}
+/* ---- customer story detail ---- */
+function openStory(id){
+ const s=STORIES.find(x=>x.id===id);if(!s)return;
+ const ov=document.getElementById('ov');
+ ov.innerHTML=`<div class="sth" style="background:linear-gradient(155deg,${s.color},${shade(s.color)})">
+   <div class="stin"><button class="back" onclick="backToStories()">← Customer stories</button>
+   <div class="brandrow"><img src="${LOGOS+s.id}.png" alt="" onerror="logoErr(this,'${esc(s.company).replace(/'/g,'')}')"><div class="bco"><b>${esc(s.company)}</b><span>${esc(s.industry)}</span></div></div>
+   <h1>${esc(s.headline)}</h1>
+   <div class="tags" style="margin-top:14px">${s.products.map(p=>`<span class="tag">${esc(p)}</span>`).join('')}<span class="tag" style="background:#0d0d0d;color:#86e090">● Real customer story</span></div>
+   </div></div>
+   <div class="dbody">
+     <div>
+       <div class="panel"><h4 style="color:${s.color}">Who they are</h4><p>${esc(s.who)}</p></div>
+       <div class="panel" style="margin-top:18px"><h4 style="color:${s.color}">The challenge</h4><p>${esc(s.challenge)}</p><img class="simg" src="${STORYIMG+s.id}-challenge.jpg" loading="lazy" alt="" onerror="this.style.display='none'"></div>
+       <div class="panel" style="margin-top:18px"><h4 style="color:${s.color}">How Vonage helped</h4><p>${esc(s.solution)}</p><img class="simg" src="${STORYIMG+s.id}-solution.jpg" loading="lazy" alt="" onerror="this.style.display='none'"></div>
+       <div class="panel" style="margin-top:18px"><h4 style="color:${s.color}">What they gained</h4>
+         <div class="smetrics">${s.results.map(r=>`<div class="smetric"><b style="color:${s.color}">${esc(r.n)}</b><span>${esc(r.t)}</span></div>`).join('')}</div>
+         <div class="squote" style="border-color:${s.color};margin-top:16px">“${esc(s.quote.t)}”<span class="qw">- ${esc(s.quote.w)}</span></div>
+         <p style="margin-top:14px;font-size:12px;color:#8b8698">Source: <a href="${s.src}" target="_blank" rel="noopener" style="color:inherit">vonage.com customer story</a></p></div>
+     </div>
+     <div class="runwrap"><div class="run" id="runpanel"></div></div>
+   </div>`;
+ buildStoryRun(s);
+ ov.classList.add('show');document.body.style.overflow='hidden';ov.scrollTop=0;
+}
+function backToStories(){home();setCat('stories');}
+function buildStoryRun(s){
+ const p=document.getElementById('runpanel');const r=s.run||{};
+ const pageUrl=((location.protocol==='https:')?location.origin:location.origin+'')+'/'+s.id;
+ if(r.kind==='send'){
+   p.innerHTML=`<h4>Demo it like ${esc(s.company)}</h4><div class="rsub">${esc(r.sub)}</div>
+     <div class="field"><input id="snum" placeholder="+44 7…"><button class="rbtn" id="sgo" onclick="doSend('${r.demo}','rcs')">${esc(r.btn)}</button></div>
+     <div class="rout" id="sout"></div>
+     <a class="rbtn full ghost" style="display:block;text-align:center;margin-top:10px" href="${pageUrl}" target="_blank">Preview the page the buttons open</a>
+     <div class="note">Live RCS via the Vonage Messages API - the card's buttons open our replica ${esc(s.company)} experience, hosted on this instance.</div>`;
+   return;
+ }
+ if(r.kind==='failover'){
+   p.innerHTML=`<h4>Demo it like ${esc(s.company)}</h4><div class="rsub">${esc(r.sub)}</div>
+     <div class="field"><input id="fonum" placeholder="+44 7…"><button class="rbtn" id="fogo" onclick="doFailover('${r.demo}')">${esc(r.btn)}</button></div>
+     <div id="fosteps"></div><div class="rout" id="foout"></div>
+     <a class="rbtn full ghost" style="display:block;text-align:center;margin-top:10px" href="${pageUrl}" target="_blank">Preview the appointment page</a>
+     <div class="note">The cascade mirrors Instyler's production logic; the final send is a live Vonage Messages API call.</div>`;
+   return;
+ }
+ if(r.kind==='video'){
+   p.innerHTML=`<h4>Demo it like ${esc(s.company)}</h4><div class="rsub">${esc(r.sub)}</div>
+     <a class="rbtn full" style="display:block;text-align:center;margin-bottom:12px" href="${pageUrl}" target="_blank">${esc(r.btn)}</a>
+     <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(pageUrl)}"></div>
+     <div class="note">Opens the replica Livestorm webinar lobby - its join button starts a real Vonage Video session. Scan from a second device to join together.</div>`;
+   return;
+ }
+ if(r.kind==='videoroom'){
+   const room='st'+Math.random().toString(36).slice(2,8);
+   const vbase=(location.protocol==='https:')?location.origin:location.origin+'';
+   const host=vbase+'/demoworld-video.html?room='+room;
+   p.innerHTML=`<h4>Demo it like ${esc(s.company)}</h4><div class="rsub">${esc(r.sub||'Their product runs on the Vonage Video API - open a real session, the same building block.')}</div>
+     <a class="rbtn full" style="display:block;text-align:center;margin-bottom:12px" href="${host}" target="_blank">${esc(r.btn||'Open a live video room')}</a>
+     <div class="qrbox"><img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(host)}"></div>
+     <div class="note">A real Vonage Video API session - join from two devices to recreate their experience.</div>`;
+   return;
+ }
+ if(r.kind==='verify'){
+   p.innerHTML=`<h4>Demo it like ${esc(s.company)}</h4><div class="rsub">${esc(r.sub||'Their sign-up protection runs on the Vonage Verify API - run the same live OTP check.')}</div>
+     <div class="field"><input id="vnum" placeholder="+44 7…"><button class="rbtn" id="vsend" onclick="vStart('${s.id}','sms')">Send code</button></div>
+     <div id="vstage"></div><div class="rout" id="vout"></div>
+     <div class="note">Live one-time passcode over the Vonage Verify API - the same flow from the story.</div>`;
+   return;
+ }
+ if(r.kind==='call'){
+   p.innerHTML=`<h4>Demo it like ${esc(s.company)}</h4><div class="rsub">${esc(r.sub||'Their solution is built on the Vonage Voice API - get a real automated call.')}</div>
+     <div class="field"><input id="cnum" placeholder="+44 7…"><button class="rbtn" id="cgo" onclick="doCall('${s.id}')">Call me</button></div>
+     <div class="rout" id="cout"></div>
+     <div class="note">Live outbound call via the Vonage Voice API - the same building block from the story.</div>`;
+   return;
+ }
+ if(r.kind==='mockflow'){
+   window._mfFlow=(r.flow&&r.flow.length?r.flow:['Request accepted by the Vonage API','Message routed on the best channel','Delivered and tracked']);
+   window._mfCompany=s.company;
+   p.innerHTML=`<h4>How ${esc(s.company)} runs it</h4><div class="rsub">${esc(r.sub||'A simulated walk-through of their production flow on the Vonage APIs.')}</div>
+     <button class="rbtn full" id="mfgo" onclick="runMockFlow()">Play the flow</button>
+     <div id="mfsteps"></div><div class="rout" id="mfout"></div>
+     <div class="note">Simulated to show the flow; in production this runs live on ${esc((s.products&&s.products[0])||'the Vonage APIs')}.</div>`;
+   return;
+ }
+ p.innerHTML=`<h4>The story</h4><div class="rsub">This one is a story-only case - read the journey on the left.</div>`;
+}
+async function runMockFlow(){
+ const F=window._mfFlow||[];const b=document.getElementById('mfgo');const st=document.getElementById('mfsteps');const o=document.getElementById('mfout');
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Running…';o.innerHTML='';
+ const S=F.map(t=>({t,st:'wait'}));
+ const draw=()=>{st.innerHTML='<div class="trace">'+S.map(x=>`<div class="trow" style="animation:none;opacity:1"><span class="tick" style="background:${x.st==='done'?'':x.st==='run'?'#0a0a0a':'#c9c9d1'}">${x.st==='done'?'✓':x.st==='run'?'…':'·'}</span><div><b>${esc(x.t)}</b></div></div>`).join('')+'</div>';};
+ for(let i=0;i<S.length;i++){S[i].st='run';draw();await new Promise(r=>setTimeout(r,900));S[i].st='done';draw();}
+ b.disabled=false;b.textContent='Play again';
+ o.innerHTML='<div class="pill-ok">✓ That is the '+esc(window._mfCompany||'customer')+' production flow - live on Vonage today</div>';
+}
+async function doFailover(demo){
+ const n=(document.getElementById('fonum').value||'').replace(/\D/g,'');
+ const b=document.getElementById('fogo');const st=document.getElementById('fosteps');const o=document.getElementById('foout');
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter a valid number</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Routing…';o.innerHTML='';
+ const S=[{t:'WhatsApp',d:'no opt-in on this handset - skipped',st:'wait'},{t:'RCS',d:'device capable - selected ✓',st:'wait'},{t:'SMS',d:'on standby as final fallback',st:'wait'}];
+ const draw=()=>{st.innerHTML='<div class="trace">'+S.map(x=>`<div class="trow" style="animation:none;opacity:1"><span class="tick" style="background:${x.st==='done'?'':x.st==='skip'?'#c9c9d1':x.st==='run'?'#0a0a0a':'#c9c9d1'}">${x.st==='done'?'✓':x.st==='skip'?'✗':x.st==='run'?'…':'·'}</span><div><b>${x.t}</b><div style="font-size:12px;color:#8b8698">${x.st==='wait'?'':x.d}</div></div></div>`).join('')+'</div>';};
+ S[0].st='run';draw();await new Promise(r=>setTimeout(r,1100));
+ S[0].st='skip';S[1].st='run';draw();await new Promise(r=>setTimeout(r,1100));
+ S[1].st='done';draw();
+ const rr=await api('/dw/api/send',{demo,channel:'rcs',to:n});
+ b.disabled=false;b.textContent='Run again';
+ o.innerHTML=rr.ok?'<div class="pill-ok">✓ Delivered over RCS to +'+esc(n)+' - check the handset</div><div class="note">One API call, best channel wins · id '+esc((rr.id||'').slice(0,18))+'</div>'
+  :'<div class="pill-bad">! '+esc(rr.error||'Send failed')+'</div>';
+}
+function traceHTML(steps){return '<div class="trace">'+steps.map((s,i)=>`<div class="trow" style="animation-delay:${i*.5}s"><span class="tick">✓</span>${esc(s)}</div>`).join('')+'</div>';}
+const simWait=ms=>new Promise(r=>setTimeout(r,ms));
+const VMARK='<svg width="15" height="15" viewBox="0 0 24 24" style="display:block"><path d="M2 4h5.1l4.9 11.2L16.9 4H22l-8.3 17h-3.4z" fill="#fff"/></svg>';
+function hopIcon(ic){return ic==='V'?VMARK:esc(ic);}
+function devIdle(d){
+ const s=d.sim||{},a=s.app||{brand:'Demo App',logo:'◆',theme:'#111116',screen:'login',cta:'Run',sub:''};
+ const el=document.getElementById('devapp');if(!el)return;
+ el.style.background=`linear-gradient(180deg,${a.theme},#0c0c10 88%)`;
+ let body='';
+ if(a.screen==='transfer')body=`<div class="devamount">${esc(a.amount||'')}</div><div class="devsub" style="text-align:center">${esc(a.sub||'')}</div><div class="devfield">Reference: July rent</div>`;
+ else if(a.screen==='checkout')body=`<div class="devamount">${esc(a.amount||'')}</div><div class="devsub" style="text-align:center">${esc(a.sub||'')}</div><div class="devfield">Visa •••• 4311</div>`;
+ else if(a.screen==='stream')body=`<div class="devplay">▶</div><div class="devsub" style="text-align:center">${esc(a.sub||'')}</div>`;
+ else if(a.screen==='signup')body=`<div class="devsub">${esc(a.sub||'')}</div>`+(a.fields||[]).map(f=>`<div class="devfield">${esc(f)}</div>`).join('');
+ else if(a.screen==='status')body=`<div class="devsub">${esc(a.sub||'')}</div>`+(a.lines||[]).map(f=>`<div class="devline">${esc(f)}</div>`).join('');
+ else if(a.screen==='reset')body=`<div class="devsub">${esc(a.sub||'')}</div><div class="devline">We will check this device before resetting.</div>`;
+ else body=`<div class="devsub">${esc(a.sub||'')}</div><div class="devfield" id="devnum">+44 7700 900123</div>`;
+ el.innerHTML=`<div class="devbrand"><span class="devlogo">${esc(a.logo||'◆')}</span>${esc(a.brand)}</div>${body}<button class="devcta" onclick="runSim('${d.id}','ok')">${esc(a.cta||'Run')}</button>`;
+}
+function railBuild(d){
+ const s=d.sim||{};const hops=s.hops||[{ic:'📱',name:'Your app',sub:'device',detail:'Request sent'},{ic:'V',name:'Vonage',sub:'API',detail:'Signed request'},{ic:'📡',name:'Carrier',sub:'network',detail:'Operator answers'}];
+ const el=document.getElementById('rail');if(!el)return;
+ el.innerHTML=hops.map((h,i)=>`<div class="hop" data-hop="${i}">
+   <div class="hopic">${hopIcon(h.ic)}</div>
+   <div class="hopbody"><div class="hoptop"><span class="hopname">${esc(h.name)}</span><span class="hopsub">${esc(h.sub||'')}</span><span class="hopms" id="hopms${i}"></span></div>
+   <div class="hopdet">${esc(h.detail||'')}</div></div></div>`).join('');
+}
+function forceGen(d,n,force){let r=d.gen(n);for(let i=0;i<80&&r.verdict[0]!==force;i++)r=d.gen(n);return r;}
+async function runSim(id,force){
+ const d=DEMOS.find(x=>x.id===id);const s=d.sim||{};const a=s.app||{};
+ const n=(document.getElementById('mnum').value||'').trim()||'+4477XXXXXXXX';
+ const hops=s.hops||[];force=force==='bad'?'bad':'ok';
+ const btn=document.getElementById('mgo'),btn2=document.getElementById('mbad');
+ if(btn)btn.disabled=true;if(btn2)btn2.disabled=true;
+ const vis=document.getElementById('simvis');vis.innerHTML='';
+ const out=document.getElementById('mout');out.innerHTML='';
+ devIdle(d);railBuild(d);
+ document.querySelectorAll('.devres,.devbusy').forEach(x=>x.remove());
+ const cta=document.querySelector('.devcta');if(cta)cta.disabled=true;
+ const scr=document.querySelector('.devscr');
+ const busy=document.createElement('div');busy.className='devbusy';
+ busy.innerHTML='<div class="spin2"></div><div class="bmsg" id="bmsg"></div>';
+ scr.appendChild(busy);
+ for(let i=0;i<hops.length;i++){
+   const h=hops[i];const row=document.querySelector(`.hop[data-hop="${i}"]`);
+   const bm=document.getElementById('bmsg');if(bm)bm.textContent=h.detail||h.name;
+   row.classList.add('on');
+   const ms=document.getElementById('hopms'+i);if(ms)ms.textContent=(40+Math.floor(Math.random()*140))+' ms';
+   await simWait(820);
+ }
+ const r=forceGen(d,n,force);const[v,txt]=r.verdict;const ok=v==='ok';
+ if(!ok&&hops.length){const last=document.querySelector(`.hop[data-hop="${hops.length-1}"]`);last.classList.remove('on');last.classList.add('fail');}
+ busy.remove();
+ const o=ok?(s.ok||{t:'Approved',s:''}):(s.bad||{t:'Declined',s:''});
+ const res=document.createElement('div');res.className='devres '+(ok?'okres':'badres');
+ res.innerHTML=`<div class="big">${ok?'✓':'!'}</div><div class="rt">${esc(o.t)}</div><div class="rs">${esc(o.s)}</div>${(!ok&&s.bad&&s.bad.otp)?'<div class="otp"><i>4</i><i>8</i><i>2</i><i>9</i></div><div class="rs" style="opacity:.7">SMS code · auto-fallback</div>':''}`;
+ scr.appendChild(res);
+ simVisual(vis,s,ok,r);
+ await simWait(s.visual?900:200);
+ out.innerHTML=`<div class="pill-${ok?'ok':'bad'}">${ok?'✓':'!'} ${esc(txt)}</div>
+   <details class="paydet"><summary>View the API request & response</summary><div class="json">${fmtJSON({endpoint:r.endpoint,request:r.request,response:r.response})}</div></details>
+   <div class="note">Simulated end to end. In production this exact flow hits the live Vonage API and returns operator-signed data.</div>`;
+ if(btn)btn.disabled=false;if(btn2)btn2.disabled=false;
+ setTimeout(()=>{const c=document.querySelector('.devcta');if(c)c.disabled=false;},200);
+}
+function simVisual(vis,s,ok,r){
+ const t=s.visual;if(!t)return;
+ if(t==='unlock'){
+   vis.innerHTML=`<svg class="lockvis" viewBox="0 0 64 64"><path class="shk shx" d="M20 30 v-8 a12 12 0 0 1 24 0 v8" fill="none" stroke="#8a8a93" stroke-width="5" stroke-linecap="round"/><rect class="bod" x="14" y="30" width="36" height="26" rx="6" fill="#3a3a44"/><circle cx="32" cy="41" r="3.4" fill="#0a0a0a"/><rect x="30.4" y="43" width="3.2" height="7" rx="1.6" fill="#0a0a0a"/></svg>`;
+   const lv=vis.querySelector('.lockvis');
+   setTimeout(()=>lv.classList.add(ok?'ok':'bad'),350);
+ }else if(t==='map'||t==='mapfind'){
+   const geo=t==='map';const dx=ok?145:252,dy=ok?75:34;
+   vis.innerHTML=`<svg class="mapvis" viewBox="0 0 290 150">
+     ${[25,60,95,130].map(y=>`<line x1="0" y1="${y}" x2="290" y2="${y}" stroke="#ffffff0e"/>`).join('')}
+     ${[40,90,145,200,250].map(x=>`<line x1="${x}" y1="0" x2="${x}" y2="150" stroke="#ffffff0e"/>`).join('')}
+     <path d="M0 118 C60 100 90 128 150 112 S250 92 290 104" stroke="#ffffff1c" stroke-width="7" fill="none"/>
+     ${geo?`<circle cx="145" cy="75" r="52" fill="#12b76a12" stroke="#12b76a" stroke-dasharray="5 5" class="mp-ring"/>`
+          :`<circle cx="145" cy="75" r="46" fill="none" stroke="#12b76a33" class="mp-ring"/><line x1="145" y1="75" x2="145" y2="29" stroke="#12b76a" stroke-width="2" class="mp-sweep"/>`}
+     <g class="mp-pin" style="animation-delay:.9s;opacity:0;animation-fill-mode:forwards">
+       <circle cx="${dx}" cy="${dy}" r="13" fill="${ok?'#12b76a':'#e5484d'}22"/>
+       <circle cx="${dx}" cy="${dy}" r="6" fill="${ok?'#12b76a':'#e5484d'}"/>
+     </g></svg>`;
+ }else if(t==='gauge'){
+   let score=ok?18:82;
+   if(r.response){
+     if(typeof r.response.riskScore==='number')score=r.response.riskScore;
+     else if(r.response.subscriber_match&&typeof r.response.subscriber_match.score==='number')score=r.response.subscriber_match.score;
+   }
+   const C=Math.PI*70;
+   vis.innerHTML=`<div class="gaugewrap"><svg viewBox="0 0 170 100" width="170"><path d="M15 95 A70 70 0 0 1 155 95" fill="none" stroke="#ffffff1a" stroke-width="13" stroke-linecap="round"/><path class="garc" d="M15 95 A70 70 0 0 1 155 95" fill="none" stroke="${ok?'#12b76a':'#e5484d'}" stroke-width="13" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}"/></svg><div class="gnum" id="gnum">0</div><div class="glab">risk score</div></div>`;
+   requestAnimationFrame(()=>{const a=vis.querySelector('.garc');if(a)a.style.strokeDashoffset=C*(1-score/100);});
+   let c=0;const iv=setInterval(()=>{c+=Math.max(1,Math.round(score/28));if(c>=score){c=score;clearInterval(iv);}const g=document.getElementById('gnum');if(g)g.textContent=c;else clearInterval(iv);},40);
+ }else if(t==='fields'){
+   const fl=s.fields||['Check'];
+   vis.innerHTML=fl.map((f,i)=>`<div class="frow" id="fr${i}"><span class="fic">·</span>${esc(f)}</div>`).join('');
+   fl.forEach((f,i)=>{setTimeout(()=>{const row=document.getElementById('fr'+i);if(!row)return;row.classList.add('show');
+     setTimeout(()=>{const bad=!ok&&i===fl.length-1;row.classList.add(bad?'badf':'okf');row.querySelector('.fic').textContent=bad?'✕':'✓';},260);},i*330);});
+ }else if(t==='bars'){
+   vis.innerHTML=`<div class="barsvis">${[18,26,20,30,24].map(h=>`<i style="height:${h}px"></i>`).join('')}</div><div class="latline" id="lat">latency <b>210 ms</b></div>`;
+   setTimeout(()=>{vis.querySelectorAll('.barsvis i').forEach((b,i)=>{b.style.height=ok?(30+i*8)+'px':'14px';b.style.background=ok?'#12b76a':'#e5484d';});
+     const l=document.getElementById('lat');if(l)l.innerHTML=ok?'latency <b>18 ms</b> · slice active':'latency <b>210 ms</b> · no slice granted';},250);
+ }else if(t==='radar'){
+   vis.innerHTML=`<div class="radarvis"><div class="rr"></div><div class="rr"></div><div class="rr"></div><div class="rtower">📡</div></div><div class="chiprow" id="chips"></div>`;
+   setTimeout(()=>{const ch=document.getElementById('chips');if(!ch)return;const R=r.response||{};
+     if(R.reachability==='CONNECTED')ch.innerHTML='<span class="schip g">✓ Connected</span>'+(R.roaming&&R.roaming.roaming?'<span class="schip a">Roaming · '+esc(R.roaming.country||'')+'</span>':'<span class="schip g">Home network</span>');
+     else ch.innerHTML='<span class="schip r">✕ Not connected</span>';},900);
+ }
+}
+async function api(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json().catch(()=>({error:'bad response'}));}
+async function doSend(id,ch){
+ const n=(document.getElementById('snum').value||'').replace(/\D/g,'');const b=document.getElementById('sgo');const o=document.getElementById('sout');
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter a valid number</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Sending…';
+ const r=await api('/dw/api/send',{demo:id,channel:ch,to:n});
+ b.disabled=false;b.textContent='Send again';
+ o.innerHTML=r.ok?`<div class="pill-ok">✓ Sent to +${esc(n)} - check the handset</div><div class="note">Live via the Vonage ${ch.toUpperCase()} API · id ${esc((r.id||'').slice(0,18))}</div>`
+   :`<div class="pill-bad">! ${esc(r.error||'Send failed')}</div>`;
+}
+async function vStart(id,ch){
+ const n=(document.getElementById('vnum').value||'').replace(/\D/g,'');const b=document.getElementById('vsend');
+ if(n.length<8){document.getElementById('vout').innerHTML='<div class="pill-bad">! Enter a valid number</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>';
+ const r=await api('/dw/api/verify/start',{to:n,channel:ch});
+ b.disabled=false;b.textContent='Resend';
+ if(!r.request_id){document.getElementById('vout').innerHTML='<div class="pill-bad">! '+esc(r.error||'Could not send')+'</div>';return;}
+ window._vreq=r.request_id;
+ document.getElementById('vstage').innerHTML=`<div class="field" style="margin-top:4px"><input id="vcode" placeholder="Enter the code you got" inputmode="numeric"><button class="rbtn" onclick="vCheck()">Verify</button></div>`;
+ document.getElementById('vout').innerHTML='<div class="note">Code sent via '+(ch==='whatsapp'?'WhatsApp':ch==='voice'?'a voice call':'SMS')+' to +'+esc(n)+' · request '+esc(r.request_id.slice(0,10))+'…</div>';
+}
+async function vCheck(){
+ const code=(document.getElementById('vcode').value||'').trim();const o=document.getElementById('vout');
+ o.innerHTML='<div class="note"><span class="spin"></span>Checking…</div>';
+ const r=await api('/dw/api/verify/check',{request_id:window._vreq,code});
+ o.innerHTML=r.verified?'<div class="pill-ok">✓ Verified - the code matched</div><div class="note">The Verify API confirmed possession of the number.</div>'
+   :'<div class="pill-bad">! '+esc(r.error||'Incorrect code')+'</div>';
+}
+async function doCall(id){
+ const n=(document.getElementById('cnum').value||'').replace(/\D/g,'');const b=document.getElementById('cgo');const o=document.getElementById('cout');
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter a valid number</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Dialing…';
+ const r=await api('/dw/api/call',{demo:id,to:n});
+ b.disabled=false;b.textContent='Call again';
+ o.innerHTML=r.ok?'<div class="pill-ok">✓ Calling +'+esc(n)+' now - answer your phone</div><div class="note">Live outbound call via the Vonage Voice API · uuid '+esc((r.uuid||'').slice(0,18))+'</div>'
+   :'<div class="pill-bad">! '+esc(r.error||'Call failed')+'</div>';
+}
+async function doWaPerm(){
+ const n=(document.getElementById('wnum').value||'').replace(/\D/g,'');const b=document.getElementById('wperm');const o=document.getElementById('wout');
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter the number with country code, e.g. 447…</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Asking…';
+ const r=await api('/dw/api/wa-call-permission',{to:n});
+ b.disabled=false;b.textContent='1 · Ask permission';
+ if(r.ok){o.innerHTML='<div class="pill-ok">✓ Permission request sent - ask them to tap Allow in WhatsApp</div><div class="note">Interactive call_permission_request via the Messages API · id '+esc((r.id||'').slice(0,18))+'</div>';return;}
+ o.innerHTML='<div class="pill-bad">! '+esc(r.error||'Could not send')+'</div>'+(r.hint?'<div class="note">'+esc(r.hint)+'</div>':'');
+}
+async function doWaCall(id){
+ const n=(document.getElementById('wnum').value||'').replace(/\D/g,'');const b=document.getElementById('wgo');const o=document.getElementById('wout');
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter the number with country code, e.g. 447…</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Ringing…';
+ const r=await api('/dw/api/wa-call',{to:n});
+ b.disabled=false;b.textContent='2 · Call on WhatsApp';
+ if(r.ok){o.innerHTML='<div class="pill-ok">✓ Call placed - WhatsApp rings if calls are allowed</div><div class="note">If nothing rings, send the permission request first (step 1) and have them tap Allow · uuid '+esc((r.uuid||'').slice(0,18))+'</div>';return;}
+ o.innerHTML='<div class="pill-bad">! '+esc(r.error||'Call failed')+'</div>'+(r.needsEnable?'<div class="note">WhatsApp calling must be enabled on the sender number (Alpha activation via Vonage).</div>':'');
+}
+async function doInsight(id){
+ const n=(document.getElementById('inum').value||'').replace(/\D/g,'');const b=document.getElementById('igo');const o=document.getElementById('iout');
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter a valid number</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Looking up…';
+ o.innerHTML=traceHTML(['Number parsed & validated','Carrier & HLR queried']);
+ const r=await api('/dw/api/insight',{number:n});
+ b.disabled=false;b.textContent='Look up again';
+ if(r.error){o.innerHTML='<div class="pill-bad">! '+esc(r.error)+'</div>';return;}
+ o.innerHTML='<div class="json">'+fmtJSON(r.data||r)+'</div><div class="note">Live via the Vonage Number Insight API.</div>';
+}
+/* ---- risk-based login pipeline ---- */
+function rfRender(){
+ const S=window._rfS||[];
+ document.getElementById('rfsteps').innerHTML='<div class="trace">'+S.map(s=>{
+  const bg=s.st==='fail'?'#e5484d':s.st==='wait'?'#c9c9d1':s.st==='run'?'#0a0a0a':'';
+  const ch=s.st==='done'?'✓':s.st==='run'?'…':s.st==='fail'?'!':'·';
+  return `<div class="trow" style="animation:none;opacity:1;align-items:flex-start"><span class="tick" ${bg?'style="background:'+bg+'"':''}>${ch}</span><div><b>${esc(s.t)}</b>${s.d?'<div style="font-size:12px;color:#8b8698;margin-top:2px">'+s.d+'</div>':''}</div></div>`;
+ }).join('')+'</div>';
+}
+async function runRiskFlow(){
+ const n=(document.getElementById('rfnum').value||'').replace(/\D/g,'');const b=document.getElementById('rfgo');const o=document.getElementById('rfout');
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter a valid number</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Running…';o.innerHTML='';document.getElementById('rfstage').innerHTML='';
+ const S=window._rfS=[{t:'Number Insight - live carrier lookup',st:'run'},{t:'SIM Swap Network API - simulated',st:'wait'},{t:'Verify API - real one-time passcode',st:'wait'}];
+ rfRender();
+ const ins=await api('/dw/api/insight',{number:n});
+ if(ins.error){S[0].st='fail';S[0].d=esc(ins.error);rfRender();b.disabled=false;b.textContent='Run again';o.innerHTML='<div class="pill-bad">! Pipeline stopped - the number failed the Insight check</div>';return;}
+ const t=ins.data||{};
+ const ported=String(t.ported).toLowerCase().includes('ported')&&!String(t.ported).toLowerCase().includes('not');
+ S[0].st='done';S[0].d=esc((t.country||'?')+' · '+(t.current_carrier||'?')+' · '+(t.line_type||'?'))+(ported?' · <b style="color:#b45309">ported number</b>':' · not ported');
+ S[1].st='run';rfRender();
+ await new Promise(r=>setTimeout(r,1500));
+ S[1].st='done';S[1].d='No SIM change in the last 72 hours - account-takeover signal clear <i>(simulated)</i>';
+ S[2].st='run';rfRender();
+ const vs=await api('/dw/api/verify/start',{to:n,channel:'sms'});
+ if(!vs.request_id){S[2].st='fail';S[2].d=esc(vs.error||'Could not send the code');rfRender();b.disabled=false;b.textContent='Run again';return;}
+ window._rfreq=vs.request_id;
+ S[2].d='Code sent by SMS - enter it below to complete the sign-in';rfRender();
+ document.getElementById('rfstage').innerHTML='<div class="field" style="margin-top:6px"><input id="rfcode" placeholder="Enter the code you received" inputmode="numeric"><button class="rbtn" onclick="rfCheck()">Approve sign-in</button></div>';
+ b.disabled=false;b.textContent='Run again';
+}
+async function rfCheck(){
+ const code=(document.getElementById('rfcode').value||'').trim();const o=document.getElementById('rfout');
+ o.innerHTML='<div class="note"><span class="spin"></span>Checking…</div>';
+ const r=await api('/dw/api/verify/check',{request_id:window._rfreq,code});
+ if(r.verified&&window._rfS){window._rfS[2].st='done';window._rfS[2].d='Possession of the number confirmed';rfRender();}
+ o.innerHTML=r.verified?'<div class="pill-ok">✓ Sign-in approved - all three checks passed</div><div class="note">Number Insight (live) + SIM-swap (simulated) + Verify (live), combined into one risk decision.</div>'
+  :'<div class="pill-bad">! '+esc(r.error||'Incorrect code')+'</div>';
+}
+/* ---- AI-scripted call ---- */
+async function doAiCall(){
+ const brief=(document.getElementById('abrief').value||'').trim();
+ const n=(document.getElementById('anum').value||'').replace(/\D/g,'');
+ const b=document.getElementById('ago');const o=document.getElementById('aout');
+ if(!brief){o.innerHTML='<div class="pill-bad">! Describe the call first</div>';return;}
+ if(n.length<8){o.innerHTML='<div class="pill-bad">! Enter a valid number</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>AI drafting…';
+ o.innerHTML=traceHTML(['Brief sent to the model','Spoken script drafted','Placing the live call']);
+ const r=await api('/dw/api/ai-call',{to:n,brief});
+ b.disabled=false;b.innerHTML='Draft &amp; call again';
+ if(!r.ok){o.innerHTML='<div class="pill-bad">! '+esc(r.error||'Call failed')+'</div>';return;}
+ o.innerHTML='<div class="pill-ok">✓ Calling +'+esc(n)+' now - answer to hear the AI script</div>'
+  +'<div class="json" style="margin-top:10px;white-space:pre-wrap">“'+esc(r.script||'')+'”</div>'
+  +'<div class="note">Script written live by Amazon Bedrock · spoken by the Vonage Voice API · uuid '+esc((r.uuid||'').slice(0,18))+'</div>';
+}
+/* ---- conference bridge ---- */
+async function doBridge(){
+ const a=(document.getElementById('bnum1').value||'').replace(/\D/g,'');
+ const c=(document.getElementById('bnum2').value||'').replace(/\D/g,'');
+ const b=document.getElementById('bgo');const o=document.getElementById('bout');
+ if(a.length<8||c.length<8){o.innerHTML='<div class="pill-bad">! Enter both numbers in full international format</div>';return;}
+ if(a===c){o.innerHTML='<div class="pill-bad">! Enter two different numbers</div>';return;}
+ b.disabled=true;b.innerHTML='<span class="spin"></span>Ringing both…';
+ const r=await api('/dw/api/bridge',{a:a,b:c});
+ b.disabled=false;b.textContent='Bridge again';
+ o.innerHTML=r.ok?'<div class="pill-ok">✓ Both phones are ringing - answer each to join the conference</div><div class="note">Room '+esc(r.room||'')+' · two live calls joined in one Vonage conversation</div>'
+  :'<div class="pill-bad">! '+esc(r.error||'Bridge failed')+'</div>';
+}
+/* ---- template creator (loaded on demand) ---- */
+function openTC(){location.href='/demoworld-templates.html';}
+/* ---- resources ---- */
+const DW_URL=location.origin+'';
+const RESOURCES=[
+ {name:'Start here',blurb:'The front doors of the Vonage developer site.',items:[
+  {t:'Documentation home',w:'Every Vonage API product, in one index',u:'https://developer.vonage.com/en/documentation',g:'DOCS'},
+  {t:'Working with Vonage APIs',w:'Auth, base URLs, webhooks - how all the APIs fit together',u:'https://developer.vonage.com/en/getting-started/overview',g:'DOCS'},
+  {t:'All API references',w:'The full endpoint reference for every API',u:'https://developer.vonage.com/en/api',g:'API REF'}]},
+ {name:'Messages API',blurb:'One API for SMS, MMS, RCS, WhatsApp, Viber and Messenger - one webhook for replies and receipts.',items:[
+  {t:'Messages API overview',w:'Concepts, supported channels and how to send your first message',u:'https://developer.vonage.com/en/messages/overview',g:'DOCS'},
+  {t:'Messages API reference',w:'Every endpoint, payload and error code',u:'https://developer.vonage.com/en/api/messages',g:'API REF'},
+  {t:'RCS messaging',w:'Rich cards, carousels, suggested replies - and how RCS senders work',u:'https://developer.vonage.com/en/messages/concepts/rcs',g:'DOCS'},
+  {t:'WhatsApp messaging',w:'Templates, the 24-hour window, interactive messages',u:'https://developer.vonage.com/en/messages/concepts/whatsapp',g:'DOCS'},
+  {t:'SMS API',w:'The classic SMS-only API, if you are not on Messages yet',u:'https://developer.vonage.com/en/messaging/sms/overview',g:'DOCS'},
+  {t:'Channel Manager - API',w:'Onboard and manage RCS agents and WhatsApp senders programmatically',u:'https://developer.vonage.com/en/channel-manager/overview',g:'DOCS'},
+  {t:'Channel Manager - dashboard (RCS agent builder)',w:'Create and manage RCS agents and WhatsApp senders in the UI',u:'https://dashboard.vonage.com/channel-manager',g:'DASHBOARD'},
+  {t:'10DLC registration (US)',w:'Register US A2P SMS traffic',u:'https://developer.vonage.com/en/10-dlc/overview',g:'DOCS'},
+  {t:'Toll-free registration (US)',w:'Register US toll-free senders',u:'https://developer.vonage.com/en/tfn-registration/overview',g:'DOCS'}]},
+ {name:'Verify API',blurb:'One workflow for 2FA - OTP over SMS, WhatsApp, RCS, Email and Voice, or fully silent via the carrier.',items:[
+  {t:'Verify overview',w:'Workflows, channels and fallbacks for one-time passcodes',u:'https://developer.vonage.com/en/verify/overview',g:'DOCS'},
+  {t:'Verify v2 API reference',w:'Endpoints for starting and checking verifications',u:'https://developer.vonage.com/en/api/verify.v2',g:'API REF'},
+  {t:'Silent Authentication',w:'Zero-input possession check over the mobile network - no OTP to intercept',u:'https://developer.vonage.com/en/verify/concepts/silent-authentication',g:'DOCS'}]},
+ {name:'Voice API',blurb:'Programmable calls - IVR, recording, conferencing, WebRTC in the browser.',items:[
+  {t:'Voice API overview',w:'Calls driven by NCCO instructions: speak, gather, route, record',u:'https://developer.vonage.com/en/voice/voice-api/overview',g:'DOCS'},
+  {t:'NCCO reference',w:'The JSON instruction set that drives every call',u:'https://developer.vonage.com/en/voice/voice-api/ncco-reference',g:'API REF'},
+  {t:'Voice API reference',w:'REST endpoints for creating and controlling calls',u:'https://developer.vonage.com/en/api/voice',g:'API REF'},
+  {t:'SIP trunking',w:'Connect your own PBX or carrier to Vonage',u:'https://developer.vonage.com/en/sip/overview',g:'DOCS'}]},
+ {name:'Video API',blurb:'Live video rooms embedded in web and mobile apps.',items:[
+  {t:'Video API overview',w:'Sessions, tokens, publishing and subscribing',u:'https://developer.vonage.com/en/video/overview',g:'DOCS'}]},
+ {name:'Identity Insights API',blurb:'One request returns the carrier and device signals behind most Network API use cases.',items:[
+  {t:'Identity Insights overview',w:'The one-call insights API and how to request signals',u:'https://developer.vonage.com/en/identity-insights/overview',g:'DOCS'},
+  {t:'SIM Swap',w:'When did this SIM last change - the account-takeover signal',u:'https://developer.vonage.com/en/identity-insights/guides/sim-swap',g:'DOCS'},
+  {t:'Device Swap',w:'When did the SIM last move to a new handset',u:'https://developer.vonage.com/en/identity-insights/guides/device-swap',g:'DOCS'},
+  {t:'Subscriber Match',w:'Match a typed name, DOB or address against the operator record (KYC)',u:'https://developer.vonage.com/en/identity-insights/guides/subscriber-match',g:'DOCS'},
+  {t:'Location Verification',w:'Is the device inside this area - a privacy-friendly true/false',u:'https://developer.vonage.com/en/identity-insights/guides/location-verification',g:'DOCS'},
+  {t:'Reachability',w:'Is the device connected to the network right now',u:'https://developer.vonage.com/en/identity-insights/guides/reachability',g:'DOCS'},
+  {t:'Roaming',w:'Is the device abroad, and in which country',u:'https://developer.vonage.com/en/identity-insights/guides/roaming',g:'DOCS'},
+  {t:'Format',w:'Number validity and normalisation',u:'https://developer.vonage.com/en/identity-insights/guides/format',g:'DOCS'},
+  {t:'Current carrier',w:'Live carrier and line type for a number',u:'https://developer.vonage.com/en/identity-insights/guides/current-carrier',g:'DOCS'},
+  {t:'Original carrier',w:'The carrier a number was first assigned to - porting signal',u:'https://developer.vonage.com/en/identity-insights/guides/original-carrier',g:'DOCS'}]},
+ {name:'Network APIs',blurb:'CAMARA-standard carrier capabilities, straight from the mobile operators.',items:[
+  {t:'Network features - concepts',w:'What the Network APIs are and how network auth works (includes Quality on Demand)',u:'https://developer.vonage.com/en/getting-started-network/concepts/network-features',g:'DOCS'},
+  {t:'Device Location Retrieval',w:'Last known network location of a SIM device - no GPS, no app',u:'https://developer.vonage.com/en/device-location-retrieval/overview',g:'DOCS'}]},
+ {name:'Number Insight & Fraud',blurb:'Number intelligence and messaging-traffic protection.',items:[
+  {t:'Number Insight',w:'Carrier, country, line type and validity for any number',u:'https://developer.vonage.com/en/number-insight/overview',g:'DOCS'},
+  {t:'Fraud Defender',w:'Real-time scoring that blocks SMS pumping (AIT) and OTP fraud',u:'https://developer.vonage.com/en/fraud-defender/overview',g:'DOCS'}]},
+ {name:'Platform & tools',blurb:'The dashboard and the plumbing around every API.',items:[
+  {t:'API Dashboard',w:'Keys, numbers, applications, usage and billing',u:'https://dashboard.vonage.com/',g:'DASHBOARD'},
+  {t:'Applications - dashboard',w:'Create applications and point their webhooks',u:'https://dashboard.vonage.com/applications',g:'DASHBOARD'},
+  {t:'Application API',w:'Manage applications programmatically',u:'https://developer.vonage.com/en/application/overview',g:'DOCS'},
+  {t:'Numbers API',w:'Search, buy and configure numbers by API',u:'https://developer.vonage.com/en/numbers/overview',g:'DOCS'},
+  {t:'Reports API',w:'Bulk usage and delivery records',u:'https://developer.vonage.com/en/reports/overview',g:'DOCS'},
+  {t:'Redact API',w:'Remove personal data from Vonage records (GDPR)',u:'https://developer.vonage.com/en/redact/overview',g:'DOCS'},
+  {t:'Account & Subaccounts',w:'Balance, settings and subaccount management',u:'https://developer.vonage.com/en/account/overview',g:'DOCS'},
+  {t:'Audit API',w:'Who changed what on the account, and when',u:'https://developer.vonage.com/en/audit/overview',g:'DOCS'},
+  {t:'Opt-Out Assist',w:'Managed STOP/opt-out handling for US messaging',u:'https://developer.vonage.com/en/opt-out-assist/overview',g:'DOCS'},
+  {t:'JWT generator',w:'Mint application JWTs in the browser for quick tests',u:'https://developer.vonage.com/en/jwt',g:'TOOL'},
+  {t:'Vonage CLI',w:'Manage apps, numbers and sends from the terminal',u:'https://developer.vonage.com/en/vonage-cli/overview',g:'TOOL'},
+  {t:'Postman collections',w:'Ready-made requests for trying the APIs',u:'https://developer.vonage.com/en/getting-started/tools/postman',g:'TOOL'},
+  {t:'SDKs & tools',w:'Server SDKs, client SDKs and the CLI',u:'https://developer.vonage.com/en/tools',g:'DOCS'},
+  {t:'Regulatory certifications',w:'Compliance and certification reference',u:'https://developer.vonage.com/en/getting-started/concepts/regulatory-certifications',g:'DOCS'}]},
+ {name:'Low-code & AI',blurb:'Build on Vonage without writing the plumbing.',items:[
+  {t:'AI Studio',w:'No-code builder for WhatsApp, voice and web AI agents',u:'https://developer.vonage.com/en/ai-studio/overview',g:'DOCS'},
+  {t:'Conversational Commerce (Jumper.ai)',w:'Sell inside chat - carts and checkout in the conversation',u:'https://developer.vonage.com/en/jumper-ai/overview',g:'DOCS'},
+  {t:'Vonage Business Cloud',w:'Integrate with the VBC phone system APIs',u:'https://developer.vonage.com/en/vonage-business-cloud/overview',g:'DOCS'},
+  {t:'Vonage MCP Server',w:'Let AI agents call Vonage APIs via MCP',u:'https://developer.vonage.com/en/mcp-server/overview',g:'DOCS'}]},
+ {name:'Demo-World',blurb:'The links to this site - drop them straight into a follow-up email.',items:[
+  {t:'Demo-World home',w:'All the runnable demos, by API family',u:DW_URL+'/demoworld',g:'DEMO'},
+  {t:'Template Creator & Library',w:'Build RCS/WhatsApp templates with AI, browse every approved template, send from the page',u:DW_URL+'/demoworld-templates.html',g:'DEMO'},
+  {t:'RCS Testers',w:'Add or remove RCS test numbers and see their invite status',u:DW_URL+'/demoworld-testers.html',g:'DEMO'},
+  {t:'Web Dialer',w:'Call any phone and talk straight from the browser',u:DW_URL+'/demoworld-webcall.html',g:'DEMO'},
+  {t:'Video Room',w:'Two-device live video - open it, scan the QR, talk',u:DW_URL+'/demoworld-video.html?room=demo',g:'DEMO'},
+  {t:'Android app (APK)',w:'Demo-World as an installable, Vonage-branded Android app',u:'https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/VonageDemoWorld.apk',g:'DEMO'},
+  {t:'WhatsApp demo line',w:'Live AI flows - message Style, Cart, Help, Track or Dress to +44 7418 317717',u:'https://wa.me/__WA_NUMBER__',g:'DEMO'}]}
+];
+function renderResources(){
+ const g=document.getElementById('resgrid');if(!g)return;
+ g.innerHTML=RESOURCES.map(gr=>`<div class="resgroup">
+   <div class="rghead"><h3>${esc(gr.name)}</h3><p>${esc(gr.blurb)}</p></div>
+   ${gr.items.map(it=>`<div class="resrow">
+     <span class="rtag ${it.g.replace(/[^A-Z]/g,'')}">${esc(it.g)}</span>
+     <div class="rmain"><a class="rt" href="${it.u}" target="_blank" rel="noopener">${esc(it.t)}</a><span class="rw">${esc(it.w)}</span><a class="ru" href="${it.u}" target="_blank" rel="noopener">${esc(it.u)}</a></div>
+   </div>`).join('')}
+ </div>`).join('');
+}
+function gotoRes(){const o=document.getElementById('ov');if(o)o.classList.remove('show');document.getElementById('resources').scrollIntoView({behavior:'smooth'});}
+/* init */
+stats();cats();render();renderResources();
+</script>
+</body>
+</html>

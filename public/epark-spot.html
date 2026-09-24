@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
+<title>ePARK · Your parking</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#292360;--deep:#231860;--ink:#1f2937;--mut:#6b7280;--ok:#12b76a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:Roboto,-apple-system,'Segoe UI',Arial,sans-serif;color:var(--ink);position:fixed;inset:0;display:flex;flex-direction:column;background:#dfe3ea}
+  .bar{flex:0 0 auto;background:var(--navy);color:#fff;padding:calc(env(safe-area-inset-top) + 11px) 15px 11px;display:flex;align-items:center;gap:10px}
+  .bar .dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(18,183,106,.25)}
+  .bar .lg{width:30px;height:30px;border-radius:8px;flex:0 0 auto}
+  .bar b{font-size:15px;font-weight:700}
+  .bar small{display:block;font-weight:400;font-size:11.5px;color:#c7c4e6}
+  .bar .live{margin-left:auto;background:var(--ok);font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:20px;letter-spacing:.3px}
+  #map{flex:1 1 auto;width:100%}
+  .info{flex:0 0 auto;background:#fff;padding:12px 15px calc(env(safe-area-inset-bottom) + 12px);display:flex;align-items:center;gap:12px;box-shadow:0 -4px 16px rgba(20,20,60,.1)}
+  .info .col{flex:1;min-width:0}
+  .info .col .r{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}
+  .info .col .r span{color:var(--mut)}
+  .info .col .r b{font-weight:700}
+  .dir{flex:0 0 auto;background:var(--navy);color:#fff;text-decoration:none;font-weight:700;font-size:13.5px;padding:11px 15px;border-radius:11px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+  .dir svg{width:15px;height:15px}
+  .carpin{background:var(--navy);color:#fff;font-weight:700;font-size:11px;padding:5px 10px 5px 5px;border-radius:14px;white-space:nowrap;box-shadow:0 3px 10px rgba(20,20,60,.4);border:2px solid #fff;transform:translate(-50%,-115%);position:relative;display:flex;align-items:center;gap:5px}
+  .carpin img{width:16px;height:16px;border-radius:4px;display:block}
+  .carpin:after{content:'';position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);border:6px solid transparent;border-top-color:#fff}
+  .leaflet-control-attribution{font-size:9px}
+</style>
+</head>
+<body>
+  <div class="bar"><img class="lg" src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/epark/logo.png" alt="ePARK"/><div><b>Your parking is active</b><small id="sub">ePARK · Stockholm</small></div><span class="live">● LIVE</span></div>
+  <div id="map"></div>
+  <div class="info">
+    <div class="col">
+      <div class="r"><span>Vehicle</span><b id="i_plate">–</b></div>
+      <div class="r"><span>Valid until</span><b id="i_until">–</b></div>
+      <div class="r"><span>Receipt</span><b id="i_code">–</b></div>
+    </div>
+    <a class="dir" id="dir" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Directions</a>
+  </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+  var q=new URLSearchParams(location.search);
+  var lat=parseFloat(q.get('lat'))||59.3339, lng=parseFloat(q.get('lng'))||18.0729;
+  var zone=q.get('zone')||'', name=q.get('name')||'', plate=q.get('plate')||'', until=q.get('until')||'', code=q.get('code')||'';
+  document.getElementById('sub').textContent='ePARK · Zone '+zone+(name?(' · '+name):'');
+  document.getElementById('i_plate').textContent=plate||'–';
+  document.getElementById('i_until').textContent=until||'–';
+  document.getElementById('i_code').textContent=code||'–';
+  document.getElementById('dir').href='https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng;
+  var map=L.map('map',{zoomControl:false,attributionControl:true}).setView([lat,lng],16);
+  L.control.zoom({position:'bottomright'}).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+  var icon=L.divIcon({className:'',html:'<div class="carpin"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/epark/logo.png"/>Zone '+zone+'</div>',iconSize:[0,0]});
+  L.marker([lat,lng],{icon:icon}).addTo(map);
+  L.circle([lat,lng],{radius:60,color:'#292360',weight:2,fillColor:'#292360',fillOpacity:.12}).addTo(map);
+  setTimeout(function(){map.invalidateSize();},250);
+</script>
+</body>
+</html>

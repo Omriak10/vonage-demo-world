@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Video Room · Vonage Demo-World</title>
+<link rel="icon" href="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-black.svg?v=6"/>
+<script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0b0b0d;color:#fff;height:100vh;overflow:hidden}
+.bar{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:12px;padding:13px 20px;background:linear-gradient(#000000cc,transparent)}
+.bar img{height:18px}.bar b{font-weight:600;font-size:13.5px;border-left:1px solid #ffffff33;padding-left:12px}
+.bar .room{margin-left:auto;font-size:12px;color:#b7b3c2;background:#ffffff14;padding:6px 12px;border-radius:100px}
+.stage{position:absolute;inset:0}
+#them{position:absolute;inset:0;background:#141418}
+#them .OT_widget-container{background:#141418}
+#me{position:absolute;right:18px;bottom:96px;width:170px;height:230px;border-radius:16px;overflow:hidden;background:#1c1c22;box-shadow:0 12px 30px #000a;border:1px solid #ffffff1f;z-index:10}
+@media(max-width:600px){#me{width:112px;height:150px;bottom:92px;right:12px}}
+.wait{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;z-index:5}
+body.has-peer .wait{display:none}
+.wait .ring{width:64px;height:64px;border-radius:50%;border:3px solid #ffffff22;border-top-color:#12b76a;animation:sp 1s linear infinite;margin-bottom:20px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.wait h2{font-size:20px;font-weight:700}
+.wait p{color:#a9a5b5;font-size:14px;margin:6px 0 20px;max-width:340px}
+.invite{background:#17171d;border:1px solid #ffffff1a;border-radius:16px;padding:18px;max-width:320px;width:100%}
+.invite .qr{width:150px;height:150px;border-radius:10px;background:#fff;margin:0 auto 12px;display:block}
+.invite .lk{display:flex;gap:8px;margin-top:10px}
+.invite input{flex:1;background:#0e0e12;border:1px solid #ffffff1f;border-radius:9px;color:#cfccd9;padding:9px 11px;font-size:12px;outline:none}
+.invite button{background:#12b76a;border:none;color:#fff;border-radius:9px;padding:9px 14px;font-weight:700;font-size:12.5px;cursor:pointer}
+.ctrls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:20;display:flex;gap:12px;background:#17171dcc;backdrop-filter:blur(10px);padding:11px 14px;border-radius:100px;border:1px solid #ffffff1a}
+.ctrl{width:50px;height:50px;border-radius:50%;border:none;background:#2a2a32;color:#fff;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.ctrl:hover{background:#3a3a44}
+.ctrl.off{background:#fff;color:#0b0b0d}
+.ctrl.leave{background:#e23b4e}.ctrl.leave:hover{background:#c62f40}
+.err{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;z-index:8}
+.err.show{display:flex}
+.err h2{font-size:19px;margin-bottom:8px}.err p{color:#a9a5b5;font-size:14px;max-width:360px}
+.err a{color:#cba1fa;font-weight:600;margin-top:14px;background:#ffffff12;padding:10px 16px;border-radius:100px}
+.badge{position:absolute;left:14px;bottom:14px;background:#00000066;font-size:11px;font-weight:600;padding:5px 10px;border-radius:100px;z-index:6}
+</style>
+</head>
+<body>
+<div class="bar"><img src="https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/logo-white.svg?v=6"><b>Video Room</b><span class="room" id="roomlbl"></span></div>
+<div class="stage">
+  <div id="them"></div>
+  <div class="wait" id="wait">
+    <div class="ring"></div>
+    <h2>You're in the room</h2>
+    <p>Waiting for someone to join. Share the link or scan the code from another device to start a live Vonage video call.</p>
+    <div class="invite">
+      <img class="qr" id="qr" alt="Join QR">
+      <div style="font-size:12px;color:#8b8698">Scan to join from a phone</div>
+      <div class="lk"><input id="link" readonly><button onclick="copyLink()">Copy</button></div>
+    </div>
+  </div>
+  <div class="err" id="err"><h2 id="errh">Camera needs HTTPS</h2><p id="errp"></p><a id="erra" style="display:none"></a></div>
+  <div id="me"></div>
+  <div class="badge" id="mebadge">You</div>
+</div>
+<div class="ctrls">
+  <button class="ctrl" id="micBtn" onclick="toggleMic()" title="Mute">🎤</button>
+  <button class="ctrl" id="camBtn" onclick="toggleCam()" title="Camera">🎥</button>
+  <button class="ctrl leave" onclick="leave()" title="Leave">✕</button>
+</div>
+<script>
+const P=new URLSearchParams(location.search);
+const room=(P.get('room')||'lobby').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,40)||'lobby';
+document.getElementById('roomlbl').textContent='Room · '+room;
+const guestUrl=location.origin+'/demoworld-video.html?room='+encodeURIComponent(room);
+document.getElementById('link').value=guestUrl;
+document.getElementById('qr').src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(guestUrl);
+function copyLink(){const i=document.getElementById('link');i.select();document.execCommand('copy');}
+let session,publisher,micOn=true,camOn=true;
+function showErr(h,p,link){document.getElementById('errh').textContent=h;document.getElementById('errp').textContent=p;document.getElementById('wait').style.display='none';const e=document.getElementById('err');e.classList.add('show');if(link){const a=document.getElementById('erra');a.href=link;a.textContent='Open the secure (HTTPS) version';a.style.display='inline-block';}}
+if(location.protocol!=='https:'&&location.hostname!=='localhost'){
+  showErr('Camera needs a secure connection','Browsers only allow camera & microphone access over HTTPS. Open this room over https to join the video call.',location.origin+'/demoworld-video.html?room='+encodeURIComponent(room));
+}else if(typeof OT==='undefined'){
+  showErr('Could not load the video SDK','The Vonage Video SDK failed to load. Check your connection and reload.');
+}else{
+  fetch('/dw/api/video/session?room='+encodeURIComponent(room)).then(r=>r.json()).then(d=>{
+    if(d.error){showErr('Video unavailable',d.error);return;}
+    session=OT.initSession(d.applicationId,d.sessionId);
+    publisher=OT.initPublisher('me',{insertMode:'append',width:'100%',height:'100%',fitMode:'cover',showControls:false,name:'You'},e=>{if(e)showErr('Camera blocked',e.message||'Allow camera & microphone access, then reload.');});
+    session.on('streamCreated',ev=>{session.subscribe(ev.stream,'them',{insertMode:'append',width:'100%',height:'100%',fitMode:'cover',showControls:false});document.body.classList.add('has-peer');});
+    session.on('streamDestroyed',()=>{setTimeout(()=>{if(!session.streams||session.streams.length()<=1)document.body.classList.remove('has-peer');},400);});
+    session.connect(d.token,e=>{if(e){showErr('Could not join',e.message);return;}session.publish(publisher);});
+  }).catch(e=>showErr('Connection error',e.message));
+}
+function toggleMic(){micOn=!micOn;if(publisher)publisher.publishAudio(micOn);document.getElementById('micBtn').classList.toggle('off',!micOn);document.getElementById('micBtn').textContent=micOn?'🎤':'🔇';}
+function toggleCam(){camOn=!camOn;if(publisher)publisher.publishVideo(camOn);document.getElementById('camBtn').classList.toggle('off',!camOn);document.getElementById('camBtn').textContent=camOn?'🎥':'🚫';}
+function leave(){try{if(session)session.disconnect();}catch(e){}location.href='/demoworld';}
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Peak Season Promotions - Agenda</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--muted:#6b6b76;--line:#e8e8ee;--violet:#0d0d0d;--lav:#bdbdc6;--bg:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.hero{position:relative;height:210px;background:#0d0d0d url(https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/peak/hero.jpg) center/cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.05),rgba(13,13,13,.85))}
+.hero .t{position:absolute;left:20px;right:20px;bottom:18px;color:#fff;z-index:1}
+.eyebrow{font:600 11px/1 Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--lav)}
+h1{font:700 26px/1.1 'Space Grotesk',sans-serif;margin:6px 0 0;letter-spacing:-.02em}
+.wrap{padding:18px 20px 40px;max-width:640px;margin:0 auto}
+.meta{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:18px}.meta b{color:var(--ink);font-weight:600}
+.s{display:grid;grid-template-columns:64px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.s .time{font:700 15px/1.2 'Space Grotesk',sans-serif;color:var(--violet)}.s .time small{display:block;font:500 11px/1.4 Inter;color:var(--muted)}
+.s h3{margin:0 0 4px;font:600 15.5px/1.3 Inter}.s p{margin:0;color:var(--muted);font-size:13.5px}
+.s img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;margin-top:10px;display:block}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{border:1.5px solid var(--ink);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;font:600 13px Inter;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.solid{background:var(--ink);color:#fff}.btn.v{border-color:var(--violet);color:var(--violet)}
+.venue{margin-top:22px;padding:16px;border:1px solid var(--line);border-radius:14px}
+.venue b{display:block;font:700 15px 'Space Grotesk',sans-serif}.venue span{color:var(--muted);font-size:13.5px}
+.foot{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
+@media print{.hero{height:170px}.btns,.foot{display:none}.wrap{padding:12px 0}}
+.vlogo{display:block;padding:16px 20px 0}.vlogo img{height:22px;width:auto;display:block}</style></head><body>
+<div class="hero"><div class="t"><div class="eyebrow">Vonage x Telefonica</div><h1>Peak Season Promotions</h1></div></div>
+<div class="wrap">
+  <div class="meta"><span><b id="d">Date</b></span><span><b>09:00 - 12:15</b></span><span id="v">Venue</span></div>
+  <div id="list"></div>
+  <div class="btns"><a class="btn solid" id="ics" download="Peak-Season-Promotions.ics">Add whole morning to calendar</a><a class="btn v" href="https://maps.google.com/?q=15+Bonhill+Street+London+EC2A+4DN" target="_blank" rel="noopener">Directions</a></div>
+  <div class="venue" id="venue"></div>
+  <div class="foot">Sent to you over RCS with the Vonage Messages API. Reply MENU in the chat to keep exploring.</div>
+</div>
+<script>
+const IMG=n=>'https://rcs-designer-storage.s3.eu-north-1.amazonaws.com/demoworld/peak/'+n+'.jpg';
+const FALLBACK={date:'2026-10-15',venue:{name:'Vonage London',address:'15 Bonhill Street, London EC2A 4DN'},agenda:[
+{t:'09:00',end:'09:30',title:'Registration & Breakfast',desc:'Grab a coffee, collect your badge and meet the Vonage and Telefonica teams.',img:'agenda-breakfast'},
+{t:'09:30',end:'09:40',title:'Welcome address',desc:'Why peak season is the moment for rich, verified messaging.',img:'agenda-welcome'},
+{t:'09:40',end:'10:30',title:'Google Ignite Lab: RCS Masterclass',desc:'Hands-on with rich cards, carousels, suggested actions and agent verification.',img:'agenda-masterclass'},
+{t:'10:30',end:'11:00',title:'RCS Innovation Showcase',desc:'Live demos: commerce, notifications, AI agents and authentication over RCS.',img:'agenda-showcase'},
+{t:'11:00',end:'11:30',title:'O2 and Telefonica: Customer Engagement & Authentication Story',desc:'How a mobile operator engages and verifies millions of customers in one thread.',img:'agenda-telefonica'},
+{t:'11:30',end:'12:15',title:'Ask the Experts: RCS Panel + Q&A',desc:'Bring your questions on compliance, carrier onboarding, pricing and design.',img:'agenda-panel'}]};
+function render(d){
+  const date=new Date(d.date+'T09:00:00');document.getElementById('d').textContent=date.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('v').textContent=d.venue.name;
+  document.getElementById('list').innerHTML=d.agenda.map(a=>`<div class="s"><div class="time">${a.t}<small>to ${a.end}</small></div><div><h3>${a.title}</h3><p>${a.desc}</p><img src="${IMG(a.img)}" alt="" loading="lazy"></div></div>`).join('');
+  document.getElementById('venue').innerHTML=`<b>${d.venue.name}</b><span>${d.venue.address}</span>`;
+  const z=(s)=>s.replace(/[-:]/g,'').replace(/\.\d+Z$/,'Z');const ev=(a)=>`BEGIN:VEVENT\r\nUID:peak-${a.t.replace(':','')}@vonage\r\nDTSTAMP:${z(new Date().toISOString())}\r\nDTSTART;TZID=Europe/London:${d.date.replace(/-/g,'')}T${a.t.replace(':','')}00\r\nDTEND;TZID=Europe/London:${d.date.replace(/-/g,'')}T${a.end.replace(':','')}00\r\nSUMMARY:${a.title}\r\nLOCATION:${d.venue.name}, ${d.venue.address}\r\nDESCRIPTION:${a.desc}\r\nEND:VEVENT`;
+  const ics='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Vonage//Peak Season//EN\r\n'+d.agenda.map(ev).join('\r\n')+'\r\nEND:VCALENDAR';
+  document.getElementById('ics').href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
+}
+render(FALLBACK);
+fetch('/dw/peak/team').then(r=>r.json()).then(render).catch(()=>{});
+</script></body></html>
